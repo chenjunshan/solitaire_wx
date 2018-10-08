@@ -1,0 +1,275 @@
+{
+    "chinese": {
+        "score": "分数",
+        "moves": "移动步数",
+        "time": "时间",
+        "settings": "设置",
+        "batGame": "蝙蝠玩",
+        "game": "游戏",
+        "hint": "提示",
+        "restore": "还原",
+        "settingsTitle": "游戏设置",
+        "settingsButton": [
+            {
+                "title": "重力感应",
+                "content": {
+                    "button1": "垂直画面",
+                    "button2": "水平画面",
+                    "button3": "自动"
+                }
+            },
+            {
+                "title": "翻三张牌",
+                "content": {
+                    "button1": "关",
+                    "button2": "开"
+                }
+            },
+            {
+                "title": "提示",
+                "content": {
+                    "button1": "关",
+                    "button2": "手动"
+                }
+            },
+            {
+                "title": "玩家计分",
+                "content": {
+                    "button1": "无",
+                    "button2": "标准",
+                    "button3": "维加斯"
+                }
+            },
+            {
+                "title": "维加斯累计",
+                "content": {
+                    "button1": "关",
+                    "button2": "开"
+                }
+            },
+            {
+                "title": "声音控制",
+                "content": {
+                    "button1": "静音",
+                    "button2": "最大"
+                }
+            },
+            {
+                "title": "语言切换",
+                "content": {
+                    "button1": "英文",
+                    "button2": "中文",
+                    "button3": "中文繁体"
+                }
+            },
+            {
+                "title": "点击移牌",
+                "content": {
+                    "button1": "开",
+                    "button2": "关",
+                    "button3": "自动"
+                }
+            },
+            {
+                "title": "通知好友",
+                "content": {}
+            },
+            {
+                "title": "游戏规则",
+                "content": "纸牌接龙只用一副牌玩，共52张，无大小王。\n\n游戏目标是翻开所有的纸牌并挪至收牌区。收牌区一共有四列牌叠（每套花色各一列），在屏幕上以矩形框环绕的字母A来表示。 需按升序排列（从A到K）。\n\n玩牌区一共有七列牌叠，需按降序排列（从 K 到 A），且红黑花色交替。你可以在不同列之间移动部分或全部牌叠，只要他们是降序排列并且花色交错。只有 K 或者 K 开头的一列牌可以移动填补到空白列。\n\n手牌区一共有一列牌叠。手牌区的牌是还没有移动到收牌区和玩牌区的牌。根据翻三张牌选项的设置，你可以一次翻一张牌或三张牌，无限次地反复翻开手牌区所有的牌。按空白手牌区以再次并多次翻开手牌区的牌。\n\n手牌区的牌被翻开后会自动放到废牌区。你可以移动废牌区的顶牌到收牌区或玩牌区相应的位置。\n\n你可以从废牌区、收牌区和玩牌区拖拽一张或一串纸牌，然后放置到玩牌区和收牌区。双击一张牌可以直接将其移动到收牌区相应位置，前提是该移动必须为合法移动。单击手牌区将翻开一张或三张牌到废牌区（取决于你的选项设置）。\n\n不是所有的游戏都可以接龙成功。翻一张牌的模式比翻三张牌的模式更容易成功。\n\n维加斯计分：\n游戏目标是你的计分大于你下注的数目。每一局游戏开局时计分为 -52 分。每向收牌区添加一张牌可以得5分。当翻三张牌选项打开时，可以反复翻完手牌区所有的牌三次。翻一张牌模式下，只可以翻完一次。维加斯累计模式下，每一局游戏间的计分将被累计。非维加斯累计模式下，每新开一局，计分将被重新设置。\n\n标准计分：\n每一局游戏开局时计分为 0 分。每向收牌区添加一张牌可以得 10 分。将纸牌从手牌区移到玩牌区的某列可得 5 分。在玩牌区的某列翻开每张牌可得 5 分。每从收牌区移动一张牌到玩牌区减 15 分。每一次还原操作减 2 分，除此之外，该还原操作所取消的移动也不得计分。当翻三张牌选项打开时，第三次翻牌后每翻完一遍手牌区所有的牌减 20 分。当翻三张牌选项关闭时，每翻完一遍手牌区所有的牌减 100 分。如果是计时游戏，每玩 10 秒减 2 分。如果接龙成功将获得奖励。奖励金额的大小取决于接龙成功所用时间的长短。时间越短奖励越高。奖励金额根据以下公式计算：700,000 / （接龙成功所用的秒数）如果接龙时间少於25秒，奖励将和25秒相同。\n\n提示：\n提示功能可以帮助玩家识别可以移动的牌。点击“提示”键激活提示功能。提示功能只显示被认为对接龙成功有助益的移动。"
+            }
+        ],
+        "gameButton": [
+            "随机牌局",
+            "重玩本局",
+            "取消"
+        ],
+        "hintMessage": "没有有效的移动步骤",
+        "hintDraw": "翻牌",
+        "hintMove": "移牌次数：",
+        "hintMoveSign": "/",
+        "hintRecycle": "牌堆循环利用"
+    },
+    "english": {
+        "score": "Score",
+        "moves": "Moves",
+        "time": "Time",
+        "settings": "Options",
+        "batGame": "BatPlay",
+        "game": "Play",
+        "hint": "Hint",
+        "restore": "Undo",
+        "settingsTitle": "Game Options",
+        "settingsButton": [
+            {
+                "title": "Orientation",
+                "content": {
+                    "button1": "Portrait",
+                    "button2": "Landscape",
+                    "button3": "Auto"
+                }
+            },
+            {
+                "title": "Draw 3",
+                "content": {
+                    "button1": "Off",
+                    "button2": "On"
+                }
+            },
+            {
+                "title": "Hints",
+                "content": {
+                    "button1": "Off",
+                    "button2": "Manual"
+                }
+            },
+            {
+                "title": "Score",
+                "content": {
+                    "button1": "None",
+                    "button2": "Standard",
+                    "button3": "Vegas"
+                }
+            },
+            {
+                "title": "Vegas Cumulative",
+                "content": {
+                    "button1": "Off",
+                    "button2": "On"
+                }
+            },
+            {
+                "title": "Sound Control",
+                "content": {
+                    "button1": "Silent",
+                    "button2": "Full"
+                }
+            },
+            {
+                "title": "Language",
+                "content": {
+                    "button1": "EN",
+                    "button2": "CN",
+                    "button3": "CN(Traditional)"
+                }
+            },
+            {
+                "title": "Tap Move",
+                "content": {
+                    "button1": "On",
+                    "button2": "Off",
+                    "button3": "Auto"
+                }
+            },
+            {
+                "title": "Tell A Friend",
+                "content": {}
+            },
+            {
+                "title": "Rules",
+                "content": "Klondike Solitaire uses a standard 52 card deck of playing cards without jokers.\n\nThe objective of the game is to expose all cards and move them into the foundation piles. There are 4 foundation piles (one for each suit) that are represented on the screen by the A with a rectangle drawn around it. These piles are built upward in suit from Aces to Kings.\n\nThere are 7 tableau columns that are built downward (in decreasing rank, from Kings to Aces) in alternating colors (red, black). Partial or complete piles can be moved from one column to another if they are built down by alternate colors and decreasing rank. Any empty column can only be filled with a King or a pile of cards with a King at the top.\n\nThere is 1 stock pile. The stock pile contains cards that have not yet been moved to a foundation pile or a tableau column. You can go through the stock pile as many times as you want turning over either 1 or 3 cards at a time depending on the setting of the Draw 3 option. Tap the empty stock pile to run through the stock pile a second time and subsequent times.\n\nWhen cards are turned over from the stock pile they go into the waste pile, you can move the top card from the waste pile to any legal location in the foundation piles or tableau columns.\n\nCards can be moved by dragging and dropping a single card or a group of cards. Cards can be dragged from the waste pile, foundation piles and tableau columns. Cards can be dropped on the tableau columns and the foundation piles. Double tapping a card will move it to the foundation pile if it is a legal move. A single tap on the stock pile will turn over either 1 or 3 cards (depending on the option setting) onto the waste pile.\n\nNot all games have a solution, a draw 1 card game is easier to win than draw 3 card game.\n\nVegas Scoring:\nThe objective is to earn more points than is wagered. Each game is started with a debt of -52 points representing the score. Each card moved to the foundation pile is awarded +5 points. When the Draw 3 option is on, 3 passes are allowed through the stock pile, otherwise only one pass is allowed. When the Vegas cumulative option is on then the point total is maintained between games. When the Vegas cumulative option is off then the point total is reset at the start of each new game.\n\nStandard Scoring:\nEach new game starts off at 0 points. Each card that is moved to the foundation receives 10 points. Each card that is moved to a tableau column receives 5 points. Each card that is turned over in the tableau column receives 5 points. When a card is moved from the foundation piles there is a loss of 15 points. Each undo request is a loss of 2 points in addition to the points that are subtracted from undoing a move. When the Draw 3 option is on there is a loss of 20 points for each pass through the stock pile after the 3rd time. When the Draw 3 option is off there is a loss of 100 points for each pass through the stock pile. For timed games only: there is a loss of 2 points for every 10 seconds of play, a bonus is awarded if the game is won. Bonus points are based on the time taken to win the game, shorter games receive larger bonuses. Bonus points are calculated with the formula of 700,000 / (seconds to win the game). Bonus points for a game that takes less than 25 seconds are the same as for a 25 second game.\n\nHints:\nThe hint feature is intended to aid the player in identifying available moves which can be made in the playing area. Tap the button labeled \"Hint\" to activate the hint mechanism. The hint mechanism was not designed to show all available moves, only those deemed to possibly be productive in arriving at a solution."
+            }
+        ],
+        "gameButton": [
+            "Random Shuffle",
+            "Replay This Game",
+            "Cancel"
+        ],
+        "hintMessage": "No useful moves detected ",
+        "hintDraw": "Draw ",
+        "hintMove": "Move ",
+        "hintMoveSign": " of ",
+        "hintRecycle": "Recycle remaining cards  "
+    },
+    "traditionalChinese": {
+        "score": "分數",
+        "moves": "移動步數",
+        "time": "時間",
+        "settings": "設定",
+        "batGame": "蝙蝠玩",
+        "game": "遊戲",
+        "hint": "提示",
+        "restore": "還原",
+        "settingsTitle": "遊戲設定",
+        "settingsButton": [
+            {
+                "title": "重力感應",
+                "content": {
+                    "button1": "垂直畫面",
+                    "button2": "水準畫面",
+                    "button3": "自動"
+                }
+            },
+            {
+                "title": "翻三張牌",
+                "content": {
+                    "button1": "關",
+                    "button2": "開"
+                }
+            },
+            {
+                "title": "提示",
+                "content": {
+                    "button1": "關",
+                    "button2": "手動"
+                }
+            },
+            {
+                "title": "玩家計分",
+                "content": {
+                    "button1": "無",
+                    "button2": "標準",
+                    "button3": "維加斯"
+                }
+            },
+            {
+                "title": "維加斯累計",
+                "content": {
+                    "button1": "關",
+                    "button2": "開"
+                }
+            },
+            {
+                "title": "聲音控制",
+                "content": {
+                    "button1": "靜音",
+                    "button2": "最大"
+                }
+            },
+            {
+                "title": "語言切換",
+                "content": {
+                    "button1": "英文",
+                    "button2": "中文",
+                    "button3": "中文繁體"
+                }
+            },
+            {
+                "title": "點擊移牌",
+                "content": {
+                    "button1": "開",
+                    "button2": "關",
+                    "button3": "自動"
+                }
+            },
+            {
+                "title": "通知好友",
+                "content": {}
+            },
+            {
+                "title": "遊戲規則",
+                "content": "紙牌接龍只用一副牌玩，共52張，無大小王。\n\n遊戲目標是翻開所有的紙牌並挪至收牌區。收牌區一共有四列牌疊（每套花色各一列），在荧幕上以矩形框環繞的字母A來表示。需按昇冪排列（從A到K）。\n\n玩牌區一共有七列牌疊，需按降序排列（從K到A），且紅黑花色交替。你可以在不同列之間移動部分或全部牌疊，只要他們是降序排列並且花色交錯。只有K或者K開頭的一列牌可以移動填補到空白列。\n\n手牌區一共有一列牌疊。手牌區的牌是還沒有移動到收牌區和玩牌區的牌。根據翻三張牌選項的設定，你可以一次翻一張牌或三張牌，無限次地反復翻開手牌區所有的牌。按空白手牌區以再次並多次翻開手牌區的牌。\n\n手牌區的牌被翻開後會自動放到廢牌區。你可以移動廢牌區的頂牌到收牌區或玩牌區相應的位置。\n\n你可以從廢牌區、收牌區和玩牌區拖拽一張或一串紙牌，然後放置到玩牌區和收牌區。按兩下一張牌可以直接將其移動到收牌區相應位置，前提是該移動必須為合法移動。按一下手牌區將翻開一張或三張牌到廢牌區（取決於你的選項設定）。\n\n不是所有的遊戲都可以接龍成功。翻一張牌的模式比翻三張牌的模式更容易成功。\n\n維加斯計分：\n遊戲目標是你的計分大於你下注的數目。每一局遊戲開局時計分為-52分。每向收牌區添加一張牌可以得5分。當翻三張牌選項打開時，可以反復翻完手牌區所有的牌三次。翻一張牌模式下，只可以翻完一次。維加斯累計模式下，每一局遊戲間的計分將被累計。非維加斯累計模式下，每新開一局，計分將被重新設定。\n\n標準計分：\n每一局遊戲開局時計分為0分。每向收牌區添加一張牌可以得10分。將紙牌從手牌區移到玩牌區的某列可得5分。在玩牌區的某列翻開每張牌可得5分。每從收牌區移動一張牌到玩牌區减15分。每一次還原操作减2分，除此之外，該還原操作所取消的移動也不得計分。當翻三張牌選項打開時，第三次翻牌後每翻完一遍手牌區所有的牌减20分。當翻三張牌選項關閉時，每翻完一遍手牌區所有的牌减100分。如果是計時遊戲，每玩10秒减2分。如果接龍成功將獲得獎勵。獎勵金額的大小取決於接龍成功所用時間的長短。時間越短獎勵越高。獎勵金額根據以下公式計算：700000 /（接龍成功所用的秒數）如果接龍時間少於25秒，獎勵將和25秒相同。\n\n提示：\n提示功能可以幫助玩家識別可以移動的牌。點擊“提示”鍵啟動提示功能。提示功能只顯示被認為對接龍成功有助益的移動。"
+            }
+        ],
+        "gameButton": [
+            "隨機牌局",
+            "重玩本局",
+            "取消"
+        ],
+        "hintMessage": "沒有有效的移動步驟",
+        "hintDraw": "翻牌",
+        "hintMove": "移牌次數：",
+        "hintMoveSign": "/",
+        "hintRecycle": "牌堆迴圈利用"
+    }
+}
