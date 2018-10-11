@@ -64,7 +64,7 @@ class Main extends eui.UILayer {
      */
     private myGroup: egret.Sprite;
     /**
-     * 手牌区Group
+     * 收牌区Group
      */
     private mySuitBg: egret.Sprite;
     /**
@@ -332,6 +332,10 @@ class Main extends eui.UILayer {
      */
     private newGameButton: eui.Image;
     /**
+     * 结束界面，下方重新开始新游戏按钮上的字
+     */
+    private newGameButtonLabel: eui.Label
+    /**
      * 原始宽
      */
     private defaultWidth: number;
@@ -383,6 +387,14 @@ class Main extends eui.UILayer {
      * 结束界面的group
      */
     private wonGroup: eui.Group;
+    /**
+     * 顶部阴影高度
+     */
+    private topH: number;
+    /**
+     * 顶部字体大小
+     */
+    private topSize: number;
 
     private hintType: number;
 
@@ -463,9 +475,9 @@ class Main extends eui.UILayer {
             RES.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS, this.onResourceProgress, this);
             RES.removeEventListener(RES.ResourceEvent.ITEM_LOAD_ERROR, this.onItemLoadError, this);
             this.isResourceLoadEnd = true;
-            if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
-                this.messageToNative();
-            }
+            // if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
+            //     this.messageToNative();
+            // }
             this.createScene();
         }
     }
@@ -476,86 +488,96 @@ class Main extends eui.UILayer {
     /**
      * 和navite消息交互
      */
-    private messageToNative() {
-        egret.ExternalInterface.addCallback("sendToJS", (message: string) => {
-            egret.log("xxx msg form native = " + message);
-            var params = JSON.parse(message);
-            var type = params['type'];
-            var data = params['data'];
-            if (type == "info") {
-                this.defaultHeight = data["screen"]["height"];
-                this.defaultWidth = this.defaultHeight * 0.5625;
+    // private messageToNative() {
+    //     egret.ExternalInterface.addCallback("sendToJS", (message: string) => {
+    //         egret.log("xxx msg form native = " + message);
+    //         var params = JSON.parse(message);
+    //         var type = params['type'];
+    //         var data = params['data'];
+    //         if (type == "info") {
+    //             this.defaultHeight = data["screen"]["height"];
+    //             this.defaultWidth = this.defaultHeight * 0.5625;
 
-                this.ScreenWidth = data["screen"]["width"] > data["screen"]["height"] ? data["screen"]["height"] : data["screen"]["width"];
-                this.ScreenHeight = data["screen"]["height"] > data["screen"]["width"] ? data["screen"]["height"] : data["screen"]["width"];
+    //             this.ScreenWidth = data["screen"]["width"] > data["screen"]["height"] ? data["screen"]["height"] : data["screen"]["width"];
+    //             this.ScreenHeight = data["screen"]["height"] > data["screen"]["width"] ? data["screen"]["height"] : data["screen"]["width"];
 
-                var language = String(data["lang"]);
-                if (language.indexOf("zh-Hant") != -1 || language.indexOf("zh-Hant-CN") != -1 || language.indexOf("zh-TW") != -1) {
-                    this.language = "traditionalChinese";
-                } else if (language.indexOf("zh-Hans") != -1 || language.indexOf("zh-Hans-CN") != -1 || language.indexOf("zh-CN") != -1) {
-                    this.language = "chinese";
-                } else if (language.indexOf("en") != -1) {
-                    this.language = "english";
-                }
-                var str = egret.localStorage.getItem("language")
-                if (str != undefined) {
-                    this.language = str;
-                }
-                this.textValue = RES.getRes("language_json");
-                this.textDatas = this.textValue[this.language];
+    //             var language = String(data["lang"]);
+    //             if (language.indexOf("zh-Hant") != -1 || language.indexOf("zh-Hant-CN") != -1 || language.indexOf("zh-TW") != -1) {
+    //                 this.language = "traditionalChinese";
+    //             } else if (language.indexOf("zh-Hans") != -1 || language.indexOf("zh-Hans-CN") != -1 || language.indexOf("zh-CN") != -1) {
+    //                 this.language = "chinese";
+    //             } else if (language.indexOf("en") != -1) {
+    //                 this.language = "english";
+    //             }
+    //             var str = egret.localStorage.getItem("language")
+    //             if (str != undefined) {
+    //                 this.language = str;
+    //             }
+    //             this.textValue = RES.getRes("language_json");
+    //             this.textDatas = this.textValue[this.language];
 
-                if (data["orientation"] == "landscape_left" || data["orientation"] == "landscape_right") {//横屏
-                    this.isCrossScreen = true;
-                    if (data["orientation"] == "landscape_left") {
-                        this.leftScreen = false;
-                    } else {
-                        this.leftScreen = true;
-                    }
-                } else if (data["orientation"] == "portrait") {//竖屏
-                    this.isCrossScreen = false;
-                }
-                this.startInit();
-                this.Screen();
-            } else if (type == "show_ad") {
-                //this.mGroup.rotation = 0;
-                // this.show_ad_over = 0;
-                // this.test.text = String(this.group_bg.width + "  " + this.group_bg.height);
-                if (egret.Capabilities.os == "Android") {
-                    egret.setTimeout(() => {
-                        this.startGame();
-                    }, this, 500);
-                } else {
-                    this.startGame();
-                }
-            } else if (type == "orientation") {
-                if (data == "landscape_left" || data == "landscape_right") {
-                    if (data == "landscape_left") {
-                        this.leftScreen = false;
-                    } else {
-                        this.leftScreen = true;
-                    }
-                    // if (this.show_ad_over == 1) {
-                    //     return;
-                    // }          
-                    this.resetCrossScreen();
-                    //this.crossScreen();
-                } else if (data == "portrait" || data == "portrait_upside_down") {
-                    //this.verticalScreen();
-                    // if (this.show_ad_over == 1) {
-                    //     return;
-                    // }
-                    this.resetVerticalScreen();
-                }
-            }
-        });
+    //             if (data["orientation"] == "landscape_left" || data["orientation"] == "landscape_right") {//横屏
+    //                 this.isCrossScreen = true;
+    //                 if (data["orientation"] == "landscape_left") {
+    //                     this.leftScreen = false;
+    //                 } else {
+    //                     this.leftScreen = true;
+    //                 }
+    //             } else if (data["orientation"] == "portrait") {//竖屏
+    //                 this.isCrossScreen = false;
+    //             }
+    //             this.startInit();
+    //             this.Screen();
+    //         } else if (type == "show_ad") {
+    //             //this.mGroup.rotation = 0;
+    //             // this.show_ad_over = 0;
+    //             // this.test.text = String(this.group_bg.width + "  " + this.group_bg.height);
+    //             if (egret.Capabilities.os == "Android") {
+    //                 egret.setTimeout(() => {
+    //                     this.startGame();
+    //                 }, this, 500);
+    //             } else {
+    //                 this.startGame();
+    //             }
+    //         } else if (type == "orientation") {
+    //             if (data == "landscape_left" || data == "landscape_right") {
+    //                 if (data == "landscape_left") {
+    //                     this.leftScreen = false;
+    //                 } else {
+    //                     this.leftScreen = true;
+    //                 }
+    //                 // if (this.show_ad_over == 1) {
+    //                 //     return;
+    //                 // }          
+    //                 this.resetCrossScreen();
+    //                 //this.crossScreen();
+    //             } else if (data == "portrait" || data == "portrait_upside_down") {
+    //                 //this.verticalScreen();
+    //                 // if (this.show_ad_over == 1) {
+    //                 //     return;
+    //                 // }
+    //                 this.resetVerticalScreen();
+    //             }
+    //         }
+    //     });
 
-        var send = {
-            type: "info"
-        };
-        egret.ExternalInterface.call("sendToNative", JSON.stringify(send));
-    }
+    //     var send = {
+    //         type: "info"
+    //     };
+    //     egret.ExternalInterface.call("sendToNative", JSON.stringify(send));
+    // }
 
     private createScene() {
+        platform.showShareMenu({
+            withShareTicket: true
+        });
+        platform.onShareAppMessage(function () {
+            // 用户点击了“转发”按钮
+            return {
+                title: "",
+                imageUrl: ""//RES.getRes("share_jpg")
+            }
+        })
         if (this.isThemeLoadEnd && this.isResourceLoadEnd) {
             this.startCreateScene();
         }
@@ -761,387 +783,394 @@ class Main extends eui.UILayer {
     }
 
     private resetCrossScreen() {
-        var width = Main.WIDTH;
-        var height = Main.HEIGHT;
-        this.stage.scaleMode = egret.StageScaleMode.EXACT_FIT;
+        // var width = Main.WIDTH;
+        // var height = Main.HEIGHT;
+        // this.stage.scaleMode = egret.StageScaleMode.EXACT_FIT;
 
-        if (this.leftScreen) {
-            this.mGroup.x = 0;
-            this.mGroup.y = height;
-            this.mGroup.rotation = -90;
-        } else {
-            this.mGroup.x = width;
-            this.mGroup.y = 0;
-            this.mGroup.rotation = 90;
-        }
-        if (!this.isCrossScreen) {
-            this.mGroup.width = height;
-            this.mGroup.height = width;
-        }
-        var scaleX, scaleY;
-        scaleX = 1; scaleY = 1;
-        var suitY = (width - 230 * 4 - 100) / 5;
-
-        // if (this.mGroup.getChildIndex(this.bottomGroup) != -1) {
-        //     this.mGroup.swapChildrenAt(this.mGroup.getChildIndex(this.bottomGroup), this.mGroup.numChildren - 1);
+        // if (this.leftScreen) {
+        //     this.mGroup.x = 0;
+        //     this.mGroup.y = height;
+        //     this.mGroup.rotation = -90;
+        // } else {
+        //     this.mGroup.x = width;
+        //     this.mGroup.y = 0;
+        //     this.mGroup.rotation = 90;
         // }
-        if (this.mGroup.getChildIndex(this.wonGroup) != -1) {
-            var backGroundImage = this.mGroup.getChildAt(0);
-            backGroundImage.width = Main.HEIGHT;
-            backGroundImage.height = Main.WIDTH;
-            this.mc.x = 420;
-            this.mc.y = -300;
-            this.modeDraw.x = (this.mGroup.height - this.modeDraw.width) / 2;
-            this.modeDraw.y = 500;
-            this.scoreLabel.x = 600;
-            this.scoreLabel.y = 650;
-            this.movesLabel.x = 900;
-            this.movesLabel.y = 650;
-            this.timeLabel.x = 1200;
-            this.timeLabel.y = 650;
+        // if (!this.isCrossScreen) {
+        //     this.mGroup.width = height;
+        //     this.mGroup.height = width;
+        // }
+        // var scaleX, scaleY;
+        // scaleX = 1; scaleY = 1;
+        // var suitY = (width - 230 * 4 - 100) / 5;
 
-            this.scoreData.x = 600 + (this.scoreLabel.width - this.scoreData.width) / 2;
-            this.scoreData.y = 700;
-            this.movesData.x = 900 + (this.movesLabel.width - this.movesData.width) / 2;
-            this.movesData.y = 700;
-            this.timeData.x = 1200 + (this.timeLabel.width - this.timeData.width) / 2;
-            this.timeData.y = 700;
-            this.newGameButton.y = 900;
-            this.newGameButton.x = (this.mGroup.height - this.newGameButton.texture.textureWidth) / 2;
-            return;
-        }
-        // this.group_bg.graphics.beginFill(0x000000, 1);
-        // this.group_bg.graphics.drawRect(0, 0, this.group_bg.width, this.group_bg.height);
-        // this.group_bg.graphics.endFill();
+        // // if (this.mGroup.getChildIndex(this.bottomGroup) != -1) {
+        // //     this.mGroup.swapChildrenAt(this.mGroup.getChildIndex(this.bottomGroup), this.mGroup.numChildren - 1);
+        // // }
+        // if (this.mGroup.getChildIndex(this.wonGroup) != -1) {
+        //     var backGroundImage = this.mGroup.getChildAt(0);
+        //     backGroundImage.width = Main.HEIGHT;
+        //     backGroundImage.height = Main.WIDTH;
+        //     this.mc.x = 420;
+        //     this.mc.y = -300;
+        //     this.modeDraw.x = (this.mGroup.height - this.modeDraw.width) / 2;
+        //     this.modeDraw.y = 500;
+        //     this.scoreLabel.x = 600;
+        //     this.scoreLabel.y = 650;
+        //     this.movesLabel.x = 900;
+        //     this.movesLabel.y = 650;
+        //     this.timeLabel.x = 1200;
+        //     this.timeLabel.y = 650;
 
-        this.topShape.graphics.clear();
-        this.topShape.graphics.beginFill(0x000000, 0.1);
-        this.topShape.graphics.drawRect(0, 0, height, suitY + 50);
-        this.topShape.graphics.endFill();
-        this.topShape.y = width - (suitY + 50);
+        //     this.scoreData.x = 600 + (this.scoreLabel.width - this.scoreData.width) / 2;
+        //     this.scoreData.y = 700;
+        //     this.movesData.x = 900 + (this.movesLabel.width - this.movesData.width) / 2;
+        //     this.movesData.y = 700;
+        //     this.timeData.x = 1200 + (this.timeLabel.width - this.timeData.width) / 2;
+        //     this.timeData.y = 700;
+        //     this.newGameButton.y = 900;
+        //     this.newGameButton.x = (this.mGroup.height - this.newGameButton.texture.textureWidth) / 2;
+        //     return;
+        // }
+        // // this.group_bg.graphics.beginFill(0x000000, 1);
+        // // this.group_bg.graphics.drawRect(0, 0, this.group_bg.width, this.group_bg.height);
+        // // this.group_bg.graphics.endFill();
 
-        this.myGroup.x = 0;
-        this.myGroup.y = suitY + 50;
+        // this.topShape.graphics.clear();
+        // this.topShape.graphics.beginFill(0x000000, 0.1);
+        // this.topShape.graphics.drawRect(0, 0, height, suitY + 50);
+        // this.topShape.graphics.endFill();
+        // this.topShape.y = width - (suitY + 50);
 
-        for (var i = 0; i < 4; i++) { //左上收牌区
-            this.mySuit[i].x = 0;
-            this.mySuit[i].y = i * (230 + suitY);
-            this.mySuit[i].getChildAt(0).scaleX = scaleX;
-            this.mySuit[i].getChildAt(0).scaleY = scaleY;
-            for (var j = 1; j < this.mySuit[i].numChildren; j++) {
-                var suitsCard = this.mySuit[i].getChildAt(j) as CardGroup;
-                this.ScaleCardGroup(suitsCard, scaleX, scaleY);
-            }
-        }
-        this.myFreeBg.x = width + (height - width) / 3;
-        this.myFreeBg.y = 0;
+        // this.myGroup.x = 0;
+        // this.myGroup.y = suitY + 50;
 
-        this.myWaste.x = (height - width) / 4;
-        this.myWaste.y = 150;
-        for (var i = 0; i < this.solitaire.wastes.length; i++) {
-            var wastesCard = this.myWaste.getChildAt(i) as CardGroup;
-            this.ScaleCardGroup(wastesCard, scaleX, scaleY);
-        }
+        // for (var i = 0; i < 4; i++) { //左上收牌区
+        //     this.mySuit[i].x = 0;
+        //     this.mySuit[i].y = i * (230 + suitY);
+        //     this.mySuit[i].getChildAt(0).scaleX = scaleX;
+        //     this.mySuit[i].getChildAt(0).scaleY = scaleY;
+        //     for (var j = 1; j < this.mySuit[i].numChildren; j++) {
+        //         var suitsCard = this.mySuit[i].getChildAt(j) as CardGroup;
+        //         this.ScaleCardGroup(suitsCard, scaleX, scaleY);
+        //     }
+        // }
+        // this.myFreeBg.x = width + (height - width) / 3;
+        // this.myFreeBg.y = 0;
 
-        this.myFree.x = (height - width) / 3;
-        this.myFree.y = this.myWaste.y + 230 + 50;
-        this.handsBgImage.scaleX = scaleX;
-        this.handsBgImage.scaleY = scaleY;
-        for (var i = 0; i < this.solitaire.hands.length; i++) {
-            var handsCard = this.myFree.getChildAt(1 + i) as CardGroup;
-            this.ScaleCardGroup(handsCard, scaleX, scaleY);
-        }
+        // this.myWaste.x = (height - width) / 4;
+        // this.myWaste.y = 150;
+        // for (var i = 0; i < this.solitaire.wastes.length; i++) {
+        //     var wastesCard = this.myWaste.getChildAt(i) as CardGroup;
+        //     this.ScaleCardGroup(wastesCard, scaleX, scaleY);
+        // }
 
-        // this.myGroup.graphics.beginFill(0x00FFFF, 1);
-        // this.myGroup.graphics.drawRect(0, 0, this.myGroup.width, this.myGroup.height);
-        // this.myGroup.graphics.endFill();
+        // this.myFree.x = (height - width) / 3;
+        // this.myFree.y = this.myWaste.y + 230 + 50;
+        // this.handsBgImage.scaleX = scaleX;
+        // this.handsBgImage.scaleY = scaleY;
+        // for (var i = 0; i < this.solitaire.hands.length; i++) {
+        //     var handsCard = this.myFree.getChildAt(1 + i) as CardGroup;
+        //     this.ScaleCardGroup(handsCard, scaleX, scaleY);
+        // }
 
-        this.myColumns.y = 0;
-        this.myColumns.x = (height - width) / 3;
-        for (var i = 0; i < 7; i++) {
-            this.columnBgImage[i].scaleX = scaleX;
-            this.columnBgImage[i].scaleY = scaleY;
-            this.columnBgImage[i].x = this.myColumns.x + this.columnI_X * i;
-            this.columnBgImage[i].y = 0;
-        }
-        for (var i = 0; i < this.solitaire.columns.length; i++) {
-            for (var j = 0; j < this.solitaire.columns[i].length; j++) {
-                var cardGroup = this.myColumn[i].getChildAt(j) as CardGroup;
-                this.ScaleCardGroup(cardGroup, scaleX, scaleY);
-            }
-        }
+        // // this.myGroup.graphics.beginFill(0x00FFFF, 1);
+        // // this.myGroup.graphics.drawRect(0, 0, this.myGroup.width, this.myGroup.height);
+        // // this.myGroup.graphics.endFill();
 
-        // this.myColumns.graphics.beginFill(0xFFF8DC, 1);
-        // this.myColumns.graphics.drawRect(0, 0, this.myColumns.width, this.myColumns.height);
-        // this.myColumns.graphics.endFill();
+        // this.myColumns.y = 0;
+        // this.myColumns.x = (height - width) / 3;
+        // for (var i = 0; i < 7; i++) {
+        //     this.columnBgImage[i].scaleX = scaleX;
+        //     this.columnBgImage[i].scaleY = scaleY;
+        //     this.columnBgImage[i].x = this.myColumns.x + this.columnI_X * i;
+        //     this.columnBgImage[i].y = 0;
+        // }
+        // for (var i = 0; i < this.solitaire.columns.length; i++) {
+        //     for (var j = 0; j < this.solitaire.columns[i].length; j++) {
+        //         var cardGroup = this.myColumn[i].getChildAt(j) as CardGroup;
+        //         this.ScaleCardGroup(cardGroup, scaleX, scaleY);
+        //     }
+        // }
 
-        if (this.scoreType != 1) {
-            this.scoreText.x = (height / 3 - this.scoreText.width) / 2;
-            this.scoreText.y = width - (suitY + 50);
-        }
-        this.movesText.y = width - (suitY + 50);
-        this.movesText.x = height / 3 + this.scoreText.x;
-        if (this.scoreType == 1) {
-            this.movesText.x = height / 3;
-        }
+        // // this.myColumns.graphics.beginFill(0xFFF8DC, 1);
+        // // this.myColumns.graphics.drawRect(0, 0, this.myColumns.width, this.myColumns.height);
+        // // this.myColumns.graphics.endFill();
 
-        this.timeText.y = width - (suitY + 50);
-        this.timeText.x = height / 3 * 2 + this.scoreText.x;
-        if (this.scoreType == 1) {
-            this.timeText.x = height / 3 * 2;
-        }
+        // if (this.scoreType != 1) {
+        //     this.scoreText.x = (height / 3 - this.scoreText.width) / 2;
+        //     this.scoreText.y = width - (suitY + 50);
+        // }
+        // this.movesText.y = width - (suitY + 50);
+        // this.movesText.x = height / 3 + this.scoreText.x;
+        // if (this.scoreType == 1) {
+        //     this.movesText.x = height / 3;
+        // }
 
-        this.bottomGroup.y = width - this.bottomGroup.height;
-        for (var i = 0; i < this.bottomGroup.numChildren; i++) {
-            if (i == 0) {
-                var image = this.bottomGroup.getChildAt(i) as eui.Image;
-                image.width = height;
-                continue;
-            }
-            var button = this.bottomGroup.getChildAt(i) as egret.Sprite;
-            if (i <= 2) {
-                button.x = (100 + button.width) * (i - 1) + 149;
-            } else {
-                button.x = height - (100 + button.width) * (6 - i);
-            }
-        }
-        if (this.mGroup.getChildIndex(this.settingsGroup) != -1) {
-            this.shp.graphics.clear();
-            this.shp.graphics.beginFill(0x000000, 0.3);
-            this.shp.graphics.drawRect(0, 0, height, width);
-            this.shp.graphics.endFill();
-            this.settingsGroup.x = (height - this.settingsBGBitmap.width) / 2;
-            this.settingsGroup.height = width - this.settingsGroup.y - this.bottomGroup.height;
-            this.scroller.height = this.settingsGroup.height - this.settingsTopGroup.height - 40;
-            this.scroller.x = 952;
-            this.scroller.rotation = 90;
-            this.scroller.height = 952;
-            this.scroller.width = this.settingsGroup.height - this.settingsTopGroup.height - 40;
+        // this.timeText.y = width - (suitY + 50);
+        // this.timeText.x = height / 3 * 2 + this.scoreText.x;
+        // if (this.scoreType == 1) {
+        //     this.timeText.x = height / 3 * 2;
+        // }
 
-            var datas = this.textDatas["settingsButton"];
-            for (var key in datas) {
-                var i = Number(key);
-                this.settingsButtonGroups[i].y = 902;
-                if (i == 8) {
-                    this.settingsButtonGroups[i].x = 164 * 7 + 70;
-                } else {
-                    this.settingsButtonGroups[i].x = 164 * i;
-                }
-                this.settingsButtonGroups[i].rotation = -90;
-            }
-            this.gameRules.y = 872;
-            this.gameRules.x = 164 * 7 + 170;
-            this.gameRules.rotation = -90;
-            this.scroller.scrollPolicyV = eui.ScrollPolicy.OFF;
-            this.scroller.scrollPolicyH = eui.ScrollPolicy.ON;
-            this.settingsBGBitmap.height = this.settingsGroup.height;
-        }
+        // this.bottomGroup.y = width - this.bottomGroup.height;
+        // for (var i = 0; i < this.bottomGroup.numChildren; i++) {
+        //     if (i == 0) {
+        //         var image = this.bottomGroup.getChildAt(i) as eui.Image;
+        //         image.width = height;
+        //         continue;
+        //     }
+        //     var button = this.bottomGroup.getChildAt(i) as egret.Sprite;
+        //     if (i <= 2) {
+        //         button.x = (100 + button.width) * (i - 1) + 149;
+        //     } else {
+        //         button.x = height - (100 + button.width) * (6 - i);
+        //     }
+        // }
+        // if (this.mGroup.getChildIndex(this.settingsGroup) != -1) {
+        //     this.shp.graphics.clear();
+        //     this.shp.graphics.beginFill(0x000000, 0.3);
+        //     this.shp.graphics.drawRect(0, 0, height, width);
+        //     this.shp.graphics.endFill();
+        //     this.settingsGroup.x = (height - this.settingsBGBitmap.width) / 2;
+        //     this.settingsGroup.height = width - this.settingsGroup.y - this.bottomGroup.height;
+        //     this.scroller.height = this.settingsGroup.height - this.settingsTopGroup.height - 40;
+        //     this.scroller.x = 952;
+        //     this.scroller.rotation = 90;
+        //     this.scroller.height = 952;
+        //     this.scroller.width = this.settingsGroup.height - this.settingsTopGroup.height - 40;
 
-        if (this.mGroup.getChildIndex(this.gameGroup) != -1) {
-            this.shp.graphics.clear();
-            this.shp.graphics.beginFill(0x000000, 0.3);
-            this.shp.graphics.drawRect(0, 0, height, width);
-            this.shp.graphics.endFill();
-            this.gameGroup.x = (height - this.buttonGameImage.texture.textureWidth) / 2;
-            this.gameGroup.y = width / 3;
-        }
+        //     var datas = this.textDatas["settingsButton"];
+        //     for (var key in datas) {
+        //         var i = Number(key);
+        //         this.settingsButtonGroups[i].y = 902;
+        //         if (i == 8) {
+        //             this.settingsButtonGroups[i].x = 164 * 7 + 70;
+        //         } else {
+        //             this.settingsButtonGroups[i].x = 164 * i;
+        //         }
+        //         this.settingsButtonGroups[i].rotation = -90;
+        //     }
+        //     this.gameRules.y = 872;
+        //     this.gameRules.x = 164 * 7 + 170;
+        //     this.gameRules.rotation = -90;
+        //     this.scroller.scrollPolicyV = eui.ScrollPolicy.OFF;
+        //     this.scroller.scrollPolicyH = eui.ScrollPolicy.ON;
+        //     this.settingsBGBitmap.height = this.settingsGroup.height;
+        // }
 
-        this.isCrossScreen = true;
+        // if (this.mGroup.getChildIndex(this.gameGroup) != -1) {
+        //     this.shp.graphics.clear();
+        //     this.shp.graphics.beginFill(0x000000, 0.3);
+        //     this.shp.graphics.drawRect(0, 0, height, width);
+        //     this.shp.graphics.endFill();
+        //     this.gameGroup.x = (height - this.buttonGameImage.texture.textureWidth) / 2;
+        //     this.gameGroup.y = width / 3;
+        // }
+
+        // this.isCrossScreen = true;
     }
 
-    private resetVerticalScreen() {
-        this.mGroup.x = 0;
-        this.mGroup.y = 0;
-        this.mGroup.rotation = 0;
-        if (this.isCrossScreen) {
-            this.mGroup.width = Main.WIDTH;
-            this.mGroup.height = Main.HEIGHT;
+    // private resetVerticalScreen() {
+    //     this.mGroup.x = 0;
+    //     this.mGroup.y = 0;
+    //     this.mGroup.rotation = 0;
+    //     if (this.isCrossScreen) {
+    //         this.mGroup.width = Main.WIDTH;
+    //         this.mGroup.height = Main.HEIGHT;
+    //     }
+
+    //     var scaleX, scaleY;
+    //     if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
+    //         scaleX = this.defaultWidth / this.ScreenWidth;
+    //         scaleY = this.defaultHeight / this.ScreenHeight;
+    //     } else {
+    //         scaleX = this.defaultWidth / window.innerWidth;
+    //         scaleY = this.defaultHeight / window.innerHeight;
+    //     }
+
+    //     if (this.mGroup.getChildIndex(this.wonGroup) != -1) {
+    //         // var backGroundImage = this.mGroup.getChildAt(0);
+    //         // backGroundImage.width = this.mGroup.width;
+    //         // backGroundImage.height = this.mGroup.height;
+    //         this.mc.x = 0;
+    //         this.mc.y = -100;
+    //         this.modeDraw.x = (this.mGroup.width - this.modeDraw.width) / 2;
+    //         this.modeDraw.y = 850;
+    //         this.scoreLabel.x = 180;
+    //         this.scoreLabel.y = 1000;
+    //         this.movesLabel.x = 480;
+    //         this.movesLabel.y = 1000;
+    //         this.timeLabel.x = 780;
+    //         this.timeLabel.y = 1000;
+
+    //         this.scoreData.x = 180 + (this.scoreLabel.width - this.scoreData.width) / 2;
+    //         this.scoreData.y = 1100;
+    //         this.movesData.x = 480 + (this.movesLabel.width - this.movesData.width) / 2;
+    //         this.movesData.y = 1100;
+    //         this.timeData.x = 780 + (this.timeLabel.width - this.timeData.width) / 2;
+    //         this.timeData.y = 1100;
+    //         this.newGameButton.y = 1500;
+    //         this.newGameButton.x = (this.mGroup.width - this.newGameButton.texture.textureWidth) / 2;
+    //         return;
+    //     }
+    //     // if (this.mGroup.getChildIndex(this.test) == -1) {
+    //     //     this.test = new eui.Label();
+    //     //     this.mGroup.addChild(this.test);
+    //     //     this.test.x = 300; this.test.y = 300;
+    //     // }
+    //     // this.test.text = String(this.group_bg.width + "  " + this.group_bg.height);
+
+    //     this.topShape.graphics.clear();
+    //     this.topShape.graphics.beginFill(0x000000, 0.1);
+    //     this.topShape.graphics.drawRect(0, this.firstTop - 108, this.mGroup.width, 78);
+    //     this.topShape.graphics.endFill();
+    //     this.topShape.y = this.firstTop - 108;
+
+    //     this.myGroup.x = 0;
+    //     this.myGroup.y = this.firstTop;
+
+    //     for (var i = 0; i < 4; i++) { //左上收牌区
+    //         this.mySuit[i].x = i * 158.5;
+    //         this.mySuit[i].y = 0;
+    //         this.mySuit[i].getChildAt(0).scaleX = scaleX;
+    //         this.mySuit[i].getChildAt(0).scaleY = scaleY;
+    //         for (var j = 1; j < this.mySuit[i].numChildren; j++) {
+    //             var suitsCard = this.mySuit[i].getChildAt(j) as CardGroup;
+    //             this.ScaleCardGroup(suitsCard, scaleX, scaleY);
+    //         }
+    //     }
+    //     this.myFreeBg.x = 270 * 2.25;
+    //     this.myFreeBg.y = 0;
+
+    //     this.myWaste.x = 60;
+    //     this.myWaste.y = 0;
+    //     for (var i = 0; i < this.solitaire.wastes.length; i++) {
+    //         var wastesCard = this.myWaste.getChildAt(i) as CardGroup;
+    //         this.ScaleCardGroup(wastesCard, scaleX, scaleY);
+    //     }
+
+    //     this.myFree.x = 320;
+    //     this.myFree.y = 0;
+    //     this.handsBgImage.scaleX = scaleX;
+    //     this.handsBgImage.scaleY = scaleY;
+    //     for (var i = 0; i < this.solitaire.hands.length; i++) {
+    //         var handsCard = this.myFree.getChildAt(1 + i) as CardGroup;
+    //         this.ScaleCardGroup(handsCard, scaleX, scaleY);
+    //     }
+
+    //     this.myColumns.x = 0;
+    //     this.myColumns.y = 230 + this.firstTop + this.SecondTop;
+    //     for (var i = 0; i < 7; i++) {
+    //         this.columnBgImage[i].scaleX = scaleX;
+    //         this.columnBgImage[i].scaleY = scaleY;
+    //         this.columnBgImage[i].x = this.myColumn[i].x;
+    //         this.columnBgImage[i].y = this.firstTop + this.SecondTop + 230;
+    //     }
+    //     for (var i = 0; i < this.solitaire.columns.length; i++) {
+    //         for (var j = 0; j < this.solitaire.columns[i].length; j++) {
+    //             var cardGroup = this.myColumn[i].getChildAt(j) as CardGroup;
+    //             this.ScaleCardGroup(cardGroup, scaleX, scaleY);
+    //         }
+    //     }
+
+    //     if (this.scoreType != 1) {
+    //         this.scoreText.x = 60; this.scoreText.y = (this.topH - this.topSize) / 2;
+    //     }
+    //     this.movesText.x = 280; this.movesText.y = (this.topH - this.topSize) / 2;
+    //     if (this.scoreType == 1) {
+    //         this.movesText.x = 150;
+    //     }
+
+    //     this.timeText.x = 500; this.timeText.y = (this.topH - this.topSize) / 2;
+    //     if (this.scoreType == 1) {
+    //         this.timeText.x = 450;
+    //     }
+
+
+    //     this.bottomGroup.y = this.mGroup.height - this.bottomGroup.height;
+    //     for (var i = 0; i < this.bottomGroup.numChildren; i++) {
+    //         if (i == 0) {
+    //             var image = this.bottomGroup.getChildAt(i) as eui.Image;
+    //             image.width = this.mGroup.width;
+    //             continue;
+    //         }
+    //         var button = this.bottomGroup.getChildAt(i) as egret.Sprite;
+    //         if (i <= 2) {
+    //             button.x = (160) * (i - 1) + 10;
+    //         } else {
+    //             button.x = this.mGroup.width - 20 - (160) * (6 - i);
+    //         }
+    //     }
+
+
+    //     if (this.mGroup.getChildIndex(this.settingsGroup) != -1) {
+    //         this.shp.graphics.clear();
+    //         this.shp.graphics.beginFill(0x000000, 0.3);
+    //         this.shp.graphics.drawRect(0, 0, this.mGroup.width, this.mGroup.height);
+    //         this.shp.graphics.endFill();
+    //         this.settingsGroup.x = (1080 - this.settingsBGBitmap.width) / 2;
+    //         this.settingsGroup.height = this.mGroup.height - this.settingsGroup.y - this.bottomGroup.height;
+    //         this.scroller.height = this.settingsGroup.height - this.settingsTopGroup.height - 40;
+    //         this.settingsBGBitmap.height = this.settingsGroup.height;
+
+    //         this.scroller.x = 20;
+    //         this.scroller.rotation = 0;
+    //         this.scroller.width = 952;
+    //         this.scroller.height = this.settingsGroup.height - this.settingsTopGroup.height - 40;
+    //         /*
+    //                     var datas = this.textDatas["settingsButton"];
+    //                     for (var key in datas) {
+    //                         var i = Number(key);
+    //                         this.settingsButtonGroups[i].rotation = 0;
+    //                         this.settingsButtonGroups[i].x = 20;
+    //                         if (i == 8) {
+    //                             this.settingsButtonGroups[i].y = 164 * 7 + 70;
+    //                         } else {
+    //                             this.settingsButtonGroups[i].y = 164 * i;
+    //                         }
+    //                     }
+    //                     this.gameRules.rotation = 0;
+    //                     this.gameRules.x = 70;
+    //                     this.gameRules.y = 164 * 7 + 170;
+    //                     this.scroller.scrollPolicyV = eui.ScrollPolicy.ON;
+    //                     this.scroller.scrollPolicyH = eui.ScrollPolicy.OFF;
+    //                     */
+    //     }
+
+    //     if (this.mGroup.getChildIndex(this.gameGroup) != -1) {
+    //         this.shp.graphics.clear();
+    //         this.shp.graphics.beginFill(0x000000, 0.3);
+    //         this.shp.graphics.drawRect(0, 0, this.mGroup.width, this.mGroup.height);
+    //         this.shp.graphics.endFill();
+    //         this.gameGroup.x = (this.mGroup.width - this.buttonGameImage.texture.textureWidth) / 2;
+    //         this.gameGroup.y = 1220;
+    //     }
+    //     // this.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.myColumnsStart, this);
+    //     // this.myColumns.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.touchTap, this);
+    //     this.isCrossScreen = false;
+    // }
+
+    private async Screen() {
+        this.firstTop = 158;
+        this.topH = 138;
+        var result: boolean = await SystemUtil.isAndroid();
+        if (result) {
+            console.log("isAndroid")
+            this.firstTop = 210;
+            this.topH = 180;
         }
-
-        var scaleX, scaleY;
-        if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
-            scaleX = this.defaultWidth / this.ScreenWidth;
-            scaleY = this.defaultHeight / this.ScreenHeight;
-        } else {
-            scaleX = this.defaultWidth / window.innerWidth;
-            scaleY = this.defaultHeight / window.innerHeight;
-        }
-
-        if (this.mGroup.getChildIndex(this.wonGroup) != -1) {
-            // var backGroundImage = this.mGroup.getChildAt(0);
-            // backGroundImage.width = this.mGroup.width;
-            // backGroundImage.height = this.mGroup.height;
-            this.mc.x = 0;
-            this.mc.y = -100;
-            this.modeDraw.x = (this.mGroup.width - this.modeDraw.width) / 2;
-            this.modeDraw.y = 850;
-            this.scoreLabel.x = 180;
-            this.scoreLabel.y = 1000;
-            this.movesLabel.x = 480;
-            this.movesLabel.y = 1000;
-            this.timeLabel.x = 780;
-            this.timeLabel.y = 1000;
-
-            this.scoreData.x = 180 + (this.scoreLabel.width - this.scoreData.width) / 2;
-            this.scoreData.y = 1100;
-            this.movesData.x = 480 + (this.movesLabel.width - this.movesData.width) / 2;
-            this.movesData.y = 1100;
-            this.timeData.x = 780 + (this.timeLabel.width - this.timeData.width) / 2;
-            this.timeData.y = 1100;
-            this.newGameButton.y = 1500;
-            this.newGameButton.x = (this.mGroup.width - this.newGameButton.texture.textureWidth) / 2;
-            return;
-        }
-        // if (this.mGroup.getChildIndex(this.test) == -1) {
-        //     this.test = new eui.Label();
-        //     this.mGroup.addChild(this.test);
-        //     this.test.x = 300; this.test.y = 300;
-        // }
-        // this.test.text = String(this.group_bg.width + "  " + this.group_bg.height);
-
-        this.topShape.graphics.clear();
-        this.topShape.graphics.beginFill(0x000000, 0.1);
-        this.topShape.graphics.drawRect(0, this.firstTop - 108, this.mGroup.width, 78);
-        this.topShape.graphics.endFill();
-        this.topShape.y = this.firstTop - 108;
-
-        this.myGroup.x = 0;
-        this.myGroup.y = this.firstTop;
-
-        for (var i = 0; i < 4; i++) { //左上收牌区
-            this.mySuit[i].x = i * 158.5;
-            this.mySuit[i].y = 0;
-            this.mySuit[i].getChildAt(0).scaleX = scaleX;
-            this.mySuit[i].getChildAt(0).scaleY = scaleY;
-            for (var j = 1; j < this.mySuit[i].numChildren; j++) {
-                var suitsCard = this.mySuit[i].getChildAt(j) as CardGroup;
-                this.ScaleCardGroup(suitsCard, scaleX, scaleY);
-            }
-        }
-        this.myFreeBg.x = 270 * 2.25;
-        this.myFreeBg.y = 0;
-
-        this.myWaste.x = 60;
-        this.myWaste.y = 0;
-        for (var i = 0; i < this.solitaire.wastes.length; i++) {
-            var wastesCard = this.myWaste.getChildAt(i) as CardGroup;
-            this.ScaleCardGroup(wastesCard, scaleX, scaleY);
-        }
-
-        this.myFree.x = 320;
-        this.myFree.y = 0;
-        this.handsBgImage.scaleX = scaleX;
-        this.handsBgImage.scaleY = scaleY;
-        for (var i = 0; i < this.solitaire.hands.length; i++) {
-            var handsCard = this.myFree.getChildAt(1 + i) as CardGroup;
-            this.ScaleCardGroup(handsCard, scaleX, scaleY);
-        }
-
-        this.myColumns.x = 0;
-        this.myColumns.y = 230 + this.firstTop + this.SecondTop;
-        for (var i = 0; i < 7; i++) {
-            this.columnBgImage[i].scaleX = scaleX;
-            this.columnBgImage[i].scaleY = scaleY;
-            this.columnBgImage[i].x = this.myColumn[i].x;
-            this.columnBgImage[i].y = this.firstTop + this.SecondTop + 230;
-        }
-        for (var i = 0; i < this.solitaire.columns.length; i++) {
-            for (var j = 0; j < this.solitaire.columns[i].length; j++) {
-                var cardGroup = this.myColumn[i].getChildAt(j) as CardGroup;
-                this.ScaleCardGroup(cardGroup, scaleX, scaleY);
-            }
-        }
-
-        if (this.scoreType != 1) {
-            this.scoreText.x = 60; this.scoreText.y = this.firstTop - 108 + 15;
-        }
-        this.movesText.x = 360; this.movesText.y = this.firstTop - 108 + 15;
-        if (this.scoreType == 1) {
-            this.movesText.x = 200;
-        }
-
-        this.timeText.x = 760; this.timeText.y = this.firstTop - 108 + 15;
-        if (this.scoreType == 1) {
-            this.timeText.x = 650;
-        }
-
-
-        this.bottomGroup.y = this.mGroup.height - this.bottomGroup.height;
-        for (var i = 0; i < this.bottomGroup.numChildren; i++) {
-            if (i == 0) {
-                var image = this.bottomGroup.getChildAt(i) as eui.Image;
-                image.width = this.mGroup.width;
-                continue;
-            }
-            var button = this.bottomGroup.getChildAt(i) as egret.Sprite;
-            if (i <= 2) {
-                button.x = (160) * (i - 1) + 10;
-            } else {
-                button.x = this.mGroup.width - 20 - (160) * (6 - i);
-            }
-        }
-
-
-        if (this.mGroup.getChildIndex(this.settingsGroup) != -1) {
-            this.shp.graphics.clear();
-            this.shp.graphics.beginFill(0x000000, 0.3);
-            this.shp.graphics.drawRect(0, 0, this.mGroup.width, this.mGroup.height);
-            this.shp.graphics.endFill();
-            this.settingsGroup.x = (1080 - this.settingsBGBitmap.width) / 2;
-            this.settingsGroup.height = this.mGroup.height - this.settingsGroup.y - this.bottomGroup.height;
-            this.scroller.height = this.settingsGroup.height - this.settingsTopGroup.height - 40;
-            this.settingsBGBitmap.height = this.settingsGroup.height;
-
-            this.scroller.x = 20;
-            this.scroller.rotation = 0;
-            this.scroller.width = 952;
-            this.scroller.height = this.settingsGroup.height - this.settingsTopGroup.height - 40;
-            /*
-                        var datas = this.textDatas["settingsButton"];
-                        for (var key in datas) {
-                            var i = Number(key);
-                            this.settingsButtonGroups[i].rotation = 0;
-                            this.settingsButtonGroups[i].x = 20;
-                            if (i == 8) {
-                                this.settingsButtonGroups[i].y = 164 * 7 + 70;
-                            } else {
-                                this.settingsButtonGroups[i].y = 164 * i;
-                            }
-                        }
-                        this.gameRules.rotation = 0;
-                        this.gameRules.x = 70;
-                        this.gameRules.y = 164 * 7 + 170;
-                        this.scroller.scrollPolicyV = eui.ScrollPolicy.ON;
-                        this.scroller.scrollPolicyH = eui.ScrollPolicy.OFF;
-                        */
-        }
-
-        if (this.mGroup.getChildIndex(this.gameGroup) != -1) {
-            this.shp.graphics.clear();
-            this.shp.graphics.beginFill(0x000000, 0.3);
-            this.shp.graphics.drawRect(0, 0, this.mGroup.width, this.mGroup.height);
-            this.shp.graphics.endFill();
-            this.gameGroup.x = (this.mGroup.width - this.buttonGameImage.texture.textureWidth) / 2;
-            this.gameGroup.y = 1220;
-        }
-        // this.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.myColumnsStart, this);
-        // this.myColumns.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.touchTap, this);
-        this.isCrossScreen = false;
-    }
-
-    private Screen() {
-        this.backGroundImage.source = RES.getRes("backGround_jpg");
-
-        this.firstTop = 250;
+        this.topSize = 40;
         this.SecondTop = 20 * 2.4;
 
+        this.backGroundImage.source = RES.getRes("backGround_jpg");
         this.columnBgImage = [];
         for (var i = 0; i < 7; i++) {
             this.columnBgImage[i] = new eui.Image();
             this.columnBgImage[i].source = RES.getRes("columnBG_png");
             this.columnBgImage[i].width = 149;
             this.columnBgImage[i].height = 230;
-            this.columnBgImage[i].x = i * 158;
+            this.columnBgImage[i].x = 7 + i * (this.columnI_X - 3);
 
             this.columnBgImage[i].y = this.firstTop + this.SecondTop + 230;
             this.mGroup.addChild(this.columnBgImage[i]);
@@ -1150,38 +1179,41 @@ class Main extends eui.UILayer {
         this.topShape = new egret.Shape();
         this.topShape.graphics.beginFill(0x000000, 0.1);
         if (egret.Capabilities.runtimeType == egret.RuntimeType.WEB || egret.Capabilities.runtimeType == egret.RuntimeType.WXGAME) {
-            this.topShape.graphics.drawRect(0, this.firstTop - 108, 1080, 78);
+            this.topShape.graphics.drawRect(0, 0, 1080, this.topH);
         } else if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
             this.topShape.graphics.drawRect(0, 0, this.ScreenWidth * 1080 / this.defaultWidth, this.firstTop - 10);
         }
         this.topShape.graphics.endFill();
         this.mGroup.addChild(this.topShape);
         this.scoreType = this.nextScoreType ? this.nextScoreType : this.scoreType;
+        this.scoreText = new egret.TextField();
+        this.scoreText.size = this.topSize;
+        this.scoreText.bold = true;
         if (this.scoreType != 1) {
-            this.scoreText = new egret.TextField();
             this.scoreText.text = this.textDatas["score"] + ": " + this.score + " ";
-            this.scoreText.size = 50;
             this.mGroup.addChild(this.scoreText);
-            this.scoreText.x = 60; this.scoreText.y = this.firstTop - 108 + 15;
         }
+        this.scoreText.x = 60; this.scoreText.y = (this.topH - this.topSize) / 2;
 
         this.movesText = new egret.TextField();
+        this.movesText.bold = true;
         this.movesText.text = this.textDatas["moves"] + ": " + this.moves + " ";
-        this.movesText.size = 50;
+        this.movesText.size = this.topSize;
         this.mGroup.addChild(this.movesText);
-        this.movesText.x = 360; this.movesText.y = this.firstTop - 108 + 15;
+        this.movesText.x = 280; this.movesText.y = (this.topH - this.topSize) / 2;
         if (this.scoreType == 1) {
-            this.movesText.x = 200;
+            this.movesText.x = 150;
         }
 
         this.timeText = new egret.TextField();
-        this.timeText.size = 50;
+        this.timeText.bold = true;
+        this.timeText.size = this.topSize;
         this.mGroup.addChild(this.timeText);
-        this.timeText.x = 760;
+        this.timeText.x = 500;
         if (this.scoreType == 1) {
-            this.timeText.x = 650;
+            this.timeText.x = 450;
         }
-        this.timeText.y = this.firstTop - 108 + 15;
+        this.timeText.y = (this.topH - this.topSize) / 2;
         this.timeText.text = this.textDatas["time"] + ": 00:00";
         this.timer = new egret.Timer(1000, 0);
         this.timer.addEventListener(egret.TimerEvent.TIMER, this.timerFunc, this);
@@ -1194,7 +1226,7 @@ class Main extends eui.UILayer {
 
         this.mySuitBg = new egret.Sprite();
         this.myGroup.addChild(this.mySuitBg);
-        this.mySuitBg.x = 0;
+        this.mySuitBg.x = 10;
         this.mySuitBg.y = 0;
         this.mySuit = [];
         for (var i = 0; i < 4; i++) { //左上收牌区
@@ -1210,7 +1242,7 @@ class Main extends eui.UILayer {
 
         this.myFreeBg = new egret.Sprite();//右上手牌区
         this.myGroup.addChild(this.myFreeBg);
-        this.myFreeBg.x = 270 * 2.25;
+        this.myFreeBg.x = 265 * 2.25;
         this.myFreeBg.y = 0;
 
         this.myWaste = new egret.Sprite();//废牌区
@@ -1235,7 +1267,7 @@ class Main extends eui.UILayer {
 
         this.myColumns = new egret.Sprite(); //下方7列
         this.mGroup.addChild(this.myColumns);
-        this.myColumns.x = 0;
+        this.myColumns.x = 7;
         this.myColumns.y = 230 + this.firstTop + this.SecondTop;
 
         this.bottomGroup = new egret.Sprite();
@@ -1302,149 +1334,149 @@ class Main extends eui.UILayer {
     }
 
     private crossScreen(isStartGame = false) {
-        this.stage.scaleMode = egret.StageScaleMode.EXACT_FIT;
+        // this.stage.scaleMode = egret.StageScaleMode.EXACT_FIT;
 
-        this.scaleXX = this.defaultWidth / this.ScreenHeight;
-        this.scaleYY = this.defaultHeight / this.ScreenWidth;
-        this.columnI_X = ((this.ScreenHeight * 1080 / this.defaultWidth * 3 / 5 - 7 * 149) / 6 + 149) * this.scaleXX;
-        if (egret.Capabilities.runtimeType == egret.RuntimeType.WEB || egret.Capabilities.runtimeType == egret.RuntimeType.WXGAME) {
-            this.scaleXX = this.defaultWidth / window.innerWidth;
-            this.scaleYY = this.defaultHeight / window.innerHeight;
-            this.columnI_X = ((window.innerWidth * 1080 / this.defaultWidth * 3 / 5 - 7 * 149) / 6 + 149) * this.scaleXX;
-        }
+        // this.scaleXX = this.defaultWidth / this.ScreenHeight;
+        // this.scaleYY = this.defaultHeight / this.ScreenWidth;
+        // this.columnI_X = ((this.ScreenHeight * 1080 / this.defaultWidth * 3 / 5 - 7 * 149) / 6 + 149) * this.scaleXX;
+        // if (egret.Capabilities.runtimeType == egret.RuntimeType.WEB || egret.Capabilities.runtimeType == egret.RuntimeType.WXGAME) {
+        //     this.scaleXX = this.defaultWidth / window.innerWidth;
+        //     this.scaleYY = this.defaultHeight / window.innerHeight;
+        //     this.columnI_X = ((window.innerWidth * 1080 / this.defaultWidth * 3 / 5 - 7 * 149) / 6 + 149) * this.scaleXX;
+        // }
 
-        var scaleX = this.scaleXX;
-        var scaleY = this.scaleYY;
+        // var scaleX = this.scaleXX;
+        // var scaleY = this.scaleYY;
 
-        if (this.mGroup.getChildIndex(this.wonGroup) != -1) {
-            this.mc.scaleY = scaleY;
-            this.mc.y = -400;
-            this.modeDraw.scaleY = scaleY;
-            this.scoreLabel.scaleY = scaleY;
-            this.movesLabel.scaleY = scaleY;
-            this.timeLabel.scaleY = scaleY;
-            this.scoreData.scaleY = scaleY;
-            this.movesData.scaleY = scaleY;
-            this.timeData.scaleY = scaleY;
-            this.newGameButton.scaleY = scaleY;
-            return;
-        }
+        // if (this.mGroup.getChildIndex(this.wonGroup) != -1) {
+        //     this.mc.scaleY = scaleY;
+        //     this.mc.y = -400;
+        //     this.modeDraw.scaleY = scaleY;
+        //     this.scoreLabel.scaleY = scaleY;
+        //     this.movesLabel.scaleY = scaleY;
+        //     this.timeLabel.scaleY = scaleY;
+        //     this.scoreData.scaleY = scaleY;
+        //     this.movesData.scaleY = scaleY;
+        //     this.timeData.scaleY = scaleY;
+        //     this.newGameButton.scaleY = scaleY;
+        //     return;
+        // }
 
-        for (var i = 0; i < 7; i++) {
-            this.columnBgImage[i].scaleX = scaleX;
-            this.columnBgImage[i].scaleY = scaleY;
-            this.columnBgImage[i].x = 70 * 2.25 + i * this.columnI_X;
-            this.columnBgImage[i].y = 0;
-            var index = this.mGroup.getChildIndex(this.columnBgImage[i])
-            this.mGroup.swapChildrenAt(index, i + 1);
-        }
+        // for (var i = 0; i < 7; i++) {
+        //     this.columnBgImage[i].scaleX = scaleX;
+        //     this.columnBgImage[i].scaleY = scaleY;
+        //     this.columnBgImage[i].x = 70 * 2.25 + i * this.columnI_X;
+        //     this.columnBgImage[i].y = 0;
+        //     var index = this.mGroup.getChildIndex(this.columnBgImage[i])
+        //     this.mGroup.swapChildrenAt(index, i + 1);
+        // }
 
-        this.handsBgImage.scaleX = scaleX;
-        this.handsBgImage.scaleY = scaleY;
+        // this.handsBgImage.scaleX = scaleX;
+        // this.handsBgImage.scaleY = scaleY;
 
-        this.myGroup.x = 0;
-        this.myGroup.y = 50 * 2.4;
-        for (var i = 0; i < 4; i++) {
-            this.mySuit[i].x = 0;
-            this.mySuit[i].y = 180 * i * 2.4;
-            this.mySuit[i].getChildAt(0).scaleX = scaleX;
-            this.mySuit[i].getChildAt(0).scaleY = scaleY;
-            if (this.mySuit[i].numChildren > 1) {
-                for (var j = 1; j < this.mySuit[i].numChildren; j++) {
-                    var suitsCard = this.mySuit[i].getChildAt(j) as CardGroup;
-                    this.scaleCardGroup(suitsCard, scaleX, scaleY);
-                }
-            }
-        }
-        this.myFreeBg.x = 370 * 2.25;
-        this.myFreeBg.y = 50 * 2.4;
-        this.myWaste.x = 20 * 2.25;
-        for (var i = 0; i < this.solitaire.wastes.length; i++) {
-            var wastesCard = this.myWaste.getChildAt(i) as CardGroup;
-            this.scaleCardGroup(wastesCard, scaleX, scaleY);
-        }
-        this.myFree.x = 50 * 2.25;
-        this.myFree.y = 220 * 2.4;
-        this.myFree.width *= scaleX;
-        this.myFree.height *= scaleY;
-        for (var i = 0; i < this.solitaire.hands.length; i++) {
-            var handsCard = this.myFree.getChildAt(1 + i) as CardGroup;
-            this.scaleCardGroup(handsCard, scaleX, scaleY);
-        }
+        // this.myGroup.x = 0;
+        // this.myGroup.y = 50 * 2.4;
+        // for (var i = 0; i < 4; i++) {
+        //     this.mySuit[i].x = 0;
+        //     this.mySuit[i].y = 180 * i * 2.4;
+        //     this.mySuit[i].getChildAt(0).scaleX = scaleX;
+        //     this.mySuit[i].getChildAt(0).scaleY = scaleY;
+        //     if (this.mySuit[i].numChildren > 1) {
+        //         for (var j = 1; j < this.mySuit[i].numChildren; j++) {
+        //             var suitsCard = this.mySuit[i].getChildAt(j) as CardGroup;
+        //             this.scaleCardGroup(suitsCard, scaleX, scaleY);
+        //         }
+        //     }
+        // }
+        // this.myFreeBg.x = 370 * 2.25;
+        // this.myFreeBg.y = 50 * 2.4;
+        // this.myWaste.x = 20 * 2.25;
+        // for (var i = 0; i < this.solitaire.wastes.length; i++) {
+        //     var wastesCard = this.myWaste.getChildAt(i) as CardGroup;
+        //     this.scaleCardGroup(wastesCard, scaleX, scaleY);
+        // }
+        // this.myFree.x = 50 * 2.25;
+        // this.myFree.y = 220 * 2.4;
+        // this.myFree.width *= scaleX;
+        // this.myFree.height *= scaleY;
+        // for (var i = 0; i < this.solitaire.hands.length; i++) {
+        //     var handsCard = this.myFree.getChildAt(1 + i) as CardGroup;
+        //     this.scaleCardGroup(handsCard, scaleX, scaleY);
+        // }
 
-        this.myColumns.x = 70 * 2.25;
-        this.myColumns.y = 0;
-        for (var i = 0; i < this.solitaire.columns.length; i++) {
-            if (this.solitaire.columns[i].length > 0)
-                this.myColumn[i].x = i * this.columnI_X;
-            for (var j = 0; j < this.solitaire.columns[i].length; j++) {
-                var cardGroup = this.myColumn[i].getChildAt(j) as CardGroup;
-                cardGroup.y = cardGroup.y * scaleY;
-                this.scaleCardGroup(cardGroup, scaleX, scaleY);
-            }
-        }
+        // this.myColumns.x = 70 * 2.25;
+        // this.myColumns.y = 0;
+        // for (var i = 0; i < this.solitaire.columns.length; i++) {
+        //     if (this.solitaire.columns[i].length > 0)
+        //         this.myColumn[i].x = i * this.columnI_X;
+        //     for (var j = 0; j < this.solitaire.columns[i].length; j++) {
+        //         var cardGroup = this.myColumn[i].getChildAt(j) as CardGroup;
+        //         cardGroup.y = cardGroup.y * scaleY;
+        //         this.scaleCardGroup(cardGroup, scaleX, scaleY);
+        //     }
+        // }
 
-        for (var i = 0; i < this.bottomGroup.numChildren; i++) {
-            var button = this.bottomGroup.getChildAt(i) as egret.Sprite;
-            if (i == 0) {
-                button.scaleY = scaleY;
-                continue;
-            }
-            button.getChildAt(0).scaleX = scaleX;
-            button.getChildAt(0).scaleY = scaleY;
-            button.getChildAt(0).y *= scaleY;
-            button.getChildAt(1).scaleX = scaleX;
-            button.getChildAt(1).scaleY = scaleY;
-            button.getChildAt(1).y *= scaleY;
-        }
-        this.bottomGroup.y = this.stage.stageHeight - this.bottomGroup.height * scaleY;
+        // for (var i = 0; i < this.bottomGroup.numChildren; i++) {
+        //     var button = this.bottomGroup.getChildAt(i) as egret.Sprite;
+        //     if (i == 0) {
+        //         button.scaleY = scaleY;
+        //         continue;
+        //     }
+        //     button.getChildAt(0).scaleX = scaleX;
+        //     button.getChildAt(0).scaleY = scaleY;
+        //     button.getChildAt(0).y *= scaleY;
+        //     button.getChildAt(1).scaleX = scaleX;
+        //     button.getChildAt(1).scaleY = scaleY;
+        //     button.getChildAt(1).y *= scaleY;
+        // }
+        // this.bottomGroup.y = this.stage.stageHeight - this.bottomGroup.height * scaleY;
 
-        if (this.mGroup.getChildIndex(this.settingsGroup) != -1) {
-            this.settingsGroup.scaleX = scaleX;
-            this.settingsGroup.scaleY = scaleY;
-            this.settingsGroup.x = (1080 - this.settingsBGBitmap.width * scaleX) / 2;
-            //     this.settingsGroup.getChildAt(0).height = window.innerHeight - this.settingsGroup.x-this.bottomGroup.height-100;
-        }
+        // if (this.mGroup.getChildIndex(this.settingsGroup) != -1) {
+        //     this.settingsGroup.scaleX = scaleX;
+        //     this.settingsGroup.scaleY = scaleY;
+        //     this.settingsGroup.x = (1080 - this.settingsBGBitmap.width * scaleX) / 2;
+        //     //     this.settingsGroup.getChildAt(0).height = window.innerHeight - this.settingsGroup.x-this.bottomGroup.height-100;
+        // }
 
-        if (this.mGroup.getChildIndex(this.gameGroup) != -1) {
-            this.gameGroup.y = 700;
-            for (var i = 0; i < this.gameGroup.numChildren; i++) {
-                var button = this.gameGroup.getChildAt(i) as egret.Sprite;
-                button.scaleY = scaleY;
-                button.scaleX = scaleX;
-                button.y *= scaleY;
-            }
-            this.gameGroup.x = (1080 - this.buttonGameImage.texture.textureWidth * scaleX) / 2;
-        }
-        if (this.scoreType != 1) {
-            this.scoreText.scaleX = scaleX;
-            this.scoreText.scaleY = scaleY;
-            this.scoreText.y = 1825;
-        }
-        this.movesText.scaleX = scaleX;
-        this.movesText.scaleY = scaleY;
-        this.movesText.y = 1825;
+        // if (this.mGroup.getChildIndex(this.gameGroup) != -1) {
+        //     this.gameGroup.y = 700;
+        //     for (var i = 0; i < this.gameGroup.numChildren; i++) {
+        //         var button = this.gameGroup.getChildAt(i) as egret.Sprite;
+        //         button.scaleY = scaleY;
+        //         button.scaleX = scaleX;
+        //         button.y *= scaleY;
+        //     }
+        //     this.gameGroup.x = (1080 - this.buttonGameImage.texture.textureWidth * scaleX) / 2;
+        // }
+        // if (this.scoreType != 1) {
+        //     this.scoreText.scaleX = scaleX;
+        //     this.scoreText.scaleY = scaleY;
+        //     this.scoreText.y = 1825;
+        // }
+        // this.movesText.scaleX = scaleX;
+        // this.movesText.scaleY = scaleY;
+        // this.movesText.y = 1825;
 
-        this.timeText.scaleX = scaleX;
-        this.timeText.scaleY = scaleY;
-        this.timeText.y = 1825;
+        // this.timeText.scaleX = scaleX;
+        // this.timeText.scaleY = scaleY;
+        // this.timeText.y = 1825;
 
-        if (this.mGroup.getChildIndex(this.settingsGroup) != -1 || this.mGroup.getChildIndex(this.gameGroup) != -1) {
-            this.mGroup.swapChildrenAt(this.myColumns.parent.getChildIndex(this.myColumns), this.myColumns.parent.numChildren - 2);
-            if (this.mGroup.getChildIndex(this.bottomGroup) != -1) {
-                this.mGroup.swapChildrenAt(this.mGroup.getChildIndex(this.bottomGroup), this.mGroup.numChildren - 2);
-            }
-        } else {
-            if (this.mGroup.getChildIndex(this.bottomGroup) != -1) {
-                this.mGroup.swapChildrenAt(this.mGroup.getChildIndex(this.bottomGroup), this.mGroup.numChildren - 1);
-                this.mGroup.swapChildrenAt(this.myColumns.parent.getChildIndex(this.myColumns), this.myColumns.parent.numChildren - 2);
-            } else {
-                this.mGroup.swapChildrenAt(this.myColumns.parent.getChildIndex(this.myColumns), this.myColumns.parent.numChildren - 1);
-            }
-        }
-        this.mGroup.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.myColumnsStart, this);
-        this.myColumns.addEventListener(egret.TouchEvent.TOUCH_TAP, this.touchTap, this);
-        this.isCrossScreen = true;
+        // if (this.mGroup.getChildIndex(this.settingsGroup) != -1 || this.mGroup.getChildIndex(this.gameGroup) != -1) {
+        //     this.mGroup.swapChildrenAt(this.myColumns.parent.getChildIndex(this.myColumns), this.myColumns.parent.numChildren - 2);
+        //     if (this.mGroup.getChildIndex(this.bottomGroup) != -1) {
+        //         this.mGroup.swapChildrenAt(this.mGroup.getChildIndex(this.bottomGroup), this.mGroup.numChildren - 2);
+        //     }
+        // } else {
+        //     if (this.mGroup.getChildIndex(this.bottomGroup) != -1) {
+        //         this.mGroup.swapChildrenAt(this.mGroup.getChildIndex(this.bottomGroup), this.mGroup.numChildren - 1);
+        //         this.mGroup.swapChildrenAt(this.myColumns.parent.getChildIndex(this.myColumns), this.myColumns.parent.numChildren - 2);
+        //     } else {
+        //         this.mGroup.swapChildrenAt(this.myColumns.parent.getChildIndex(this.myColumns), this.myColumns.parent.numChildren - 1);
+        //     }
+        // }
+        // this.mGroup.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.myColumnsStart, this);
+        // this.myColumns.addEventListener(egret.TouchEvent.TOUCH_TAP, this.touchTap, this);
+        // this.isCrossScreen = true;
     }
 
     private ScaleCardGroup(cardGroup, scaleX, scaleY) {
@@ -1475,7 +1507,6 @@ class Main extends eui.UILayer {
             this.columnI_X = ((window.innerWidth * 1080 / this.defaultWidth - 7 * 149) / 6 + 149) * scaleX;
         }
 
-
         if (this.mGroup.getChildIndex(this.wonGroup) != -1) {
             this.mc.scaleY = scaleY;
             this.mc.y = -100;
@@ -1493,7 +1524,7 @@ class Main extends eui.UILayer {
         for (var i = 0; i < 7; i++) {
             this.columnBgImage[i].scaleX = scaleX;
             this.columnBgImage[i].scaleY = scaleY;
-            this.columnBgImage[i].x = i * this.columnI_X;
+            this.columnBgImage[i].x = 7 + i * (this.columnI_X - 3);
             this.columnBgImage[i].y = 230 * scaleY + this.firstTop + this.SecondTop;
         }
 
@@ -1528,7 +1559,7 @@ class Main extends eui.UILayer {
                 }
             }
         }
-        this.myFreeBg.x = 270 * 2.25;
+        this.myFreeBg.x = 265 * 2.25;
         this.myFreeBg.y = 0;
 
         this.myWaste.x = 60;
@@ -1575,10 +1606,10 @@ class Main extends eui.UILayer {
             handsCard.getChildAt(3).y /= this.scaleYY;
         }
 
-        this.myColumns.x = 0;
+        this.myColumns.x = 7;
         this.myColumns.y = 230 * scaleY + this.firstTop + this.SecondTop;
         for (var i = 0; i < this.myColumns.numChildren; i++) {
-            this.myColumn[i].x = i * this.columnI_X;
+            this.myColumn[i].x = i * (this.columnI_X - 3);
             var columnCardY = 0;
             for (var j = 0; j < this.solitaire.columns[i].length; j++) {
                 var cardGroup = this.myColumn[i].getChildAt(j) as CardGroup;
@@ -1648,15 +1679,15 @@ class Main extends eui.UILayer {
         if (this.scoreType != 1) {
             this.scoreText.scaleX = scaleX;
             this.scoreText.scaleY = scaleY;
-            this.scoreText.y = this.firstTop - 108 + 15;
+            this.scoreText.y = (this.topH - this.topSize) / 2;
         }
         this.movesText.scaleX = scaleX;
         this.movesText.scaleY = scaleY;
-        this.movesText.y = this.firstTop - 108 + 15;
+        this.movesText.y = (this.topH - this.topSize) / 2;
 
         this.timeText.scaleX = scaleX;
         this.timeText.scaleY = scaleY;
-        this.timeText.y = this.firstTop - 108 + 15;
+        this.timeText.y = (this.topH - this.topSize) / 2;
 
         this.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.myColumnsStart, this);
         this.myColumns.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.touchTap, this);
@@ -2296,7 +2327,7 @@ class Main extends eui.UILayer {
         this.myColumn = [];
         for (var i = 0; i < 7; i++) {
             this.myColumn[i] = new egret.Sprite();
-            this.myColumn[i].x = i * this.columnI_X;
+            this.myColumn[i].x = i * (this.columnI_X - 3);
             this.myColumns.addChild(this.myColumn[i]);
             for (var j = i; j < 7; j++) {
                 cardGroups[xx] = new CardGroup(this.solitaire.columns[j][i]);
@@ -2438,19 +2469,19 @@ class Main extends eui.UILayer {
         this.isStart = false;
         if (this.scoreType != 1) {
             this.scoreText.text = this.textDatas["score"] + ": " + this.score + " ";;
-            this.scoreText.size = 50;
+            this.scoreText.size = this.topSize;
             this.mGroup.addChild(this.scoreText);
             this.scoreText.x = 60;
         }
         this.movesText.text = this.textDatas["moves"] + ": " + this.moves + " ";
-        this.movesText.x = 360;
+        this.movesText.x = 280;
         if (this.scoreType == 1) {
-            this.movesText.x = 200;
+            this.movesText.x = 150;
         }
         this.timeText.text = this.textDatas["time"] + ": 00:00";
-        this.timeText.x = 760;
+        this.timeText.x = 500;
         if (this.scoreType == 1) {
-            this.timeText.x = 650;
+            this.timeText.x = 450;
         }
         this.lastClickDragCardCount = -1;
     }
@@ -2464,8 +2495,8 @@ class Main extends eui.UILayer {
                 this.movesText.x = this.mGroup.height / 3;
                 this.timeText.x = this.mGroup.height / 3 * 2;
             } else {
-                this.movesText.x = 200;
-                this.timeText.x = 650;
+                this.movesText.x = 150;
+                this.timeText.x = 450;
             }
         } else {
             if (this.mGroup.getChildIndex(this.scoreText) == -1) {
@@ -2477,8 +2508,8 @@ class Main extends eui.UILayer {
                 this.timeText.x = this.mGroup.height / 3 * 2 + this.scoreText.x;
             } else {
                 this.scoreText.x = 60;
-                this.movesText.x = 360;
-                this.timeText.x = 760;
+                this.movesText.x = 280;
+                this.timeText.x = 500;
             }
         }
     }
@@ -5609,11 +5640,11 @@ class Main extends eui.UILayer {
 
         this.modeDraw = new eui.Label();
         if (this.scoreType == 1) {
-            this.modeDraw.text = "None mode,Draw" + this.clickDragCardCount;
+            this.modeDraw.text = this.textDatas["modeDraw"][0] + this.clickDragCardCount;
         } else if (this.scoreType == 2) {
-            this.modeDraw.text = "Standard mode,Draw" + this.clickDragCardCount;
+            this.modeDraw.text = this.textDatas["modeDraw"][1] + this.clickDragCardCount;
         } else if (this.scoreType == 3) {
-            this.modeDraw.text = "Vegas modw,Draw" + this.clickDragCardCount;
+            this.modeDraw.text = this.textDatas["modeDraw"][2] + this.clickDragCardCount;
         }
         this.modeDraw.size = 65;
         this.modeDraw.textColor = 0x92d2ad;
@@ -5623,7 +5654,7 @@ class Main extends eui.UILayer {
 
         this.scoreLabel = new eui.Label();
         this.wonGroup.addChild(this.scoreLabel);
-        this.scoreLabel.text = "Score";
+        this.scoreLabel.text = this.textDatas["score"];
         this.scoreLabel.size = 55;
         this.scoreLabel.textColor = 0x92d2ad;
         this.scoreLabel.x = 180;
@@ -5631,7 +5662,7 @@ class Main extends eui.UILayer {
 
         this.movesLabel = new eui.Label();
         this.wonGroup.addChild(this.movesLabel);
-        this.movesLabel.text = "Moves";
+        this.movesLabel.text = this.textDatas["moves"];
         this.movesLabel.size = 50;
         this.movesLabel.textColor = 0x92d2ad;
         this.movesLabel.x = 480;
@@ -5639,7 +5670,7 @@ class Main extends eui.UILayer {
 
         this.timeLabel = new eui.Label();
         this.wonGroup.addChild(this.timeLabel);
-        this.timeLabel.text = "Time";
+        this.timeLabel.text = this.textDatas["time"];
         this.timeLabel.size = 55;
         this.timeLabel.textColor = 0x92d2ad;
         this.timeLabel.x = 780;
@@ -5680,39 +5711,48 @@ class Main extends eui.UILayer {
         this.newGameButton.y = 1500;
         this.newGameButton.addEventListener(egret.TouchEvent.TOUCH_TAP, this.randStartGame, this);
 
-        if (this.isCrossScreen) {
-            // this.mc.scaleY = this.scaleYY;
-            // this.mc.y = -400;
-            // this.modeDraw.scaleY = this.scaleYY;
-            // this.scoreLabel.scaleY = this.scaleYY;
-            // this.movesLabel.scaleY = this.scaleYY;
-            // this.timeLabel.scaleY = this.scaleYY;
-            // this.scoreData.scaleY = this.scaleYY;
-            // this.movesData.scaleY = this.scaleYY;
-            // this.timeData.scaleY = this.scaleYY;
-            // this.newGameButton.scaleY = this.scaleYY;
+        this.newGameButtonLabel = new eui.Label();
+        this.wonGroup.addChild(this.newGameButtonLabel);
+        this.newGameButtonLabel.text = this.textDatas["newGameButton"];
+        this.newGameButtonLabel.size = 62;
+        this.newGameButtonLabel.textColor = 0x1c643b;
+        this.newGameButtonLabel.x = (this.stage.stageWidth - this.newGameButtonLabel.textWidth) / 2;
+        this.newGameButtonLabel.y = this.newGameButton.y - 5 + (this.newGameButton.texture.textureHeight - this.newGameButtonLabel.size) / 2;
 
-            backGroundImage.width = Main.HEIGHT;
-            backGroundImage.height = Main.WIDTH;
-            this.mc.x = 420;
-            this.mc.y = -300;
-            this.modeDraw.x = (Main.HEIGHT - this.modeDraw.width) / 2;
-            this.modeDraw.y = 500;
-            this.scoreLabel.x = 600;
-            this.scoreLabel.y = 650;
-            this.movesLabel.x = 900;
-            this.movesLabel.y = 650;
-            this.timeLabel.x = 1200;
-            this.timeLabel.y = 650;
 
-            this.scoreData.x = 600 + (this.scoreLabel.width - this.scoreData.width) / 2;
-            this.scoreData.y = 700;
-            this.movesData.x = 900 + (this.movesLabel.width - this.movesData.width) / 2;
-            this.movesData.y = 700;
-            this.timeData.x = 1200 + (this.timeLabel.width - this.timeData.width) / 2;
-            this.timeData.y = 700;
-            this.newGameButton.y = 900;
-            this.newGameButton.x = (Main.HEIGHT - this.newGameButton.texture.textureWidth) / 2;
-        }
+        // if (this.isCrossScreen) {
+        //     // this.mc.scaleY = this.scaleYY;
+        //     // this.mc.y = -400;
+        //     // this.modeDraw.scaleY = this.scaleYY;
+        //     // this.scoreLabel.scaleY = this.scaleYY;
+        //     // this.movesLabel.scaleY = this.scaleYY;
+        //     // this.timeLabel.scaleY = this.scaleYY;
+        //     // this.scoreData.scaleY = this.scaleYY;
+        //     // this.movesData.scaleY = this.scaleYY;
+        //     // this.timeData.scaleY = this.scaleYY;
+        //     // this.newGameButton.scaleY = this.scaleYY;
+
+        //     backGroundImage.width = Main.HEIGHT;
+        //     backGroundImage.height = Main.WIDTH;
+        //     this.mc.x = 420;
+        //     this.mc.y = -300;
+        //     this.modeDraw.x = (Main.HEIGHT - this.modeDraw.width) / 2;
+        //     this.modeDraw.y = 500;
+        //     this.scoreLabel.x = 600;
+        //     this.scoreLabel.y = 650;
+        //     this.movesLabel.x = 900;
+        //     this.movesLabel.y = 650;
+        //     this.timeLabel.x = 1200;
+        //     this.timeLabel.y = 650;
+
+        //     this.scoreData.x = 600 + (this.scoreLabel.width - this.scoreData.width) / 2;
+        //     this.scoreData.y = 700;
+        //     this.movesData.x = 900 + (this.movesLabel.width - this.movesData.width) / 2;
+        //     this.movesData.y = 700;
+        //     this.timeData.x = 1200 + (this.timeLabel.width - this.timeData.width) / 2;
+        //     this.timeData.y = 700;
+        //     this.newGameButton.y = 900;
+        //     this.newGameButton.x = (Main.HEIGHT - this.newGameButton.texture.textureWidth) / 2;
+        // }
     }
 }

@@ -1,7 +1,7 @@
 {
     "chinese": {
         "score": "分数",
-        "moves": "移动步数",
+        "moves": "步数",
         "time": "时间",
         "settings": "设置",
         "batGame": "蝙蝠玩",
@@ -88,7 +88,13 @@
         "hintDraw": "翻牌",
         "hintMove": "移牌次数：",
         "hintMoveSign": "/",
-        "hintRecycle": "牌堆循环利用"
+        "hintRecycle": "牌堆循环利用",
+        "modeDraw": [
+            "无计分，单次翻牌：",
+            "标准计分，单次翻牌：",
+            "维加斯计分，单次翻牌："
+        ],
+        "newGameButton":"再 来 一 局"
     },
     "english": {
         "score": "Score",
@@ -179,11 +185,17 @@
         "hintDraw": "Draw ",
         "hintMove": "Move ",
         "hintMoveSign": " of ",
-        "hintRecycle": "Recycle remaining cards  "
+        "hintRecycle": "Recycle remaining cards  ",
+        "modeDraw": [
+            "None mode,Draw",
+            "Standard mode,Draw",
+            "Vegas modw,Draw"
+        ],
+        "newGameButton":"New Game"
     },
     "traditionalChinese": {
         "score": "分數",
-        "moves": "移動步數",
+        "moves": "步數",
         "time": "時間",
         "settings": "設定",
         "batGame": "蝙蝠玩",
@@ -270,6 +282,12 @@
         "hintDraw": "翻牌",
         "hintMove": "移牌次數：",
         "hintMoveSign": "/",
-        "hintRecycle": "牌堆迴圈利用"
+        "hintRecycle": "牌堆迴圈利用",
+        "modeDraw": [
+            "無計分，單次翻牌：",
+            "標準計分，單次翻牌：",
+            "維加斯計分，單次翻牌："
+        ],
+        "newGameButton":"再 來 一 局"
     }
 }
