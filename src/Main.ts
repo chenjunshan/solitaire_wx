@@ -1151,17 +1151,24 @@ class Main extends eui.UILayer {
     //     this.isCrossScreen = false;
     // }
 
+    private topShapeY: number;
     private async Screen() {
         this.firstTop = 158;
         this.topH = 138;
-        var result: boolean = await SystemUtil.isAndroid();
-        if (result) {
+        this.topSize = 40;
+        this.topShapeY = 0;
+        this.SecondTop = 20 * 2.4;
+        var isAndroid: boolean = await SystemUtil.isAndroid();
+        if (isAndroid) {
             console.log("isAndroid")
             this.firstTop = 210;
             this.topH = 180;
         }
-        this.topSize = 40;
-        this.SecondTop = 20 * 2.4;
+        var isIPhoneX: boolean = await SystemUtil.isIPhoneX();
+        if (isIPhoneX) {
+            console.log("isIPhoneX")
+            this.topShapeY = 88;
+        }
 
         this.backGroundImage.source = RES.getRes("backGround_jpg");
         this.columnBgImage = [];
@@ -1171,18 +1178,18 @@ class Main extends eui.UILayer {
             this.columnBgImage[i].width = 149;
             this.columnBgImage[i].height = 230;
             this.columnBgImage[i].x = 7 + i * (this.columnI_X - 3);
-
-            this.columnBgImage[i].y = this.firstTop + this.SecondTop + 230;
+            this.columnBgImage[i].y = this.firstTop + this.topShapeY + this.SecondTop + 230;
             this.mGroup.addChild(this.columnBgImage[i]);
         }
 
         this.topShape = new egret.Shape();
         this.topShape.graphics.beginFill(0x000000, 0.1);
         if (egret.Capabilities.runtimeType == egret.RuntimeType.WEB || egret.Capabilities.runtimeType == egret.RuntimeType.WXGAME) {
-            this.topShape.graphics.drawRect(0, 0, 1080, this.topH);
-        } else if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
-            this.topShape.graphics.drawRect(0, 0, this.ScreenWidth * 1080 / this.defaultWidth, this.firstTop - 10);
+            this.topShape.graphics.drawRect(0, this.topShapeY, 1080, this.topH);
         }
+        //  else if (egret.Capabilities.runtimeType == egret.RuntimeType.NATIVE) {
+        // this.topShape.graphics.drawRect(0, 0, this.ScreenWidth * 1080 / this.defaultWidth, this.firstTop - 10);
+        // }
         this.topShape.graphics.endFill();
         this.mGroup.addChild(this.topShape);
         this.scoreType = this.nextScoreType ? this.nextScoreType : this.scoreType;
@@ -1193,14 +1200,14 @@ class Main extends eui.UILayer {
             this.scoreText.text = this.textDatas["score"] + ": " + this.score + " ";
             this.mGroup.addChild(this.scoreText);
         }
-        this.scoreText.x = 60; this.scoreText.y = (this.topH - this.topSize) / 2;
+        this.scoreText.x = 60; this.scoreText.y = (this.topH - this.topSize) / 2 + this.topShapeY;
 
         this.movesText = new egret.TextField();
         this.movesText.bold = true;
         this.movesText.text = this.textDatas["moves"] + ": " + this.moves + " ";
         this.movesText.size = this.topSize;
         this.mGroup.addChild(this.movesText);
-        this.movesText.x = 280; this.movesText.y = (this.topH - this.topSize) / 2;
+        this.movesText.x = 280; this.movesText.y = (this.topH - this.topSize) / 2 + this.topShapeY;
         if (this.scoreType == 1) {
             this.movesText.x = 150;
         }
@@ -1213,7 +1220,7 @@ class Main extends eui.UILayer {
         if (this.scoreType == 1) {
             this.timeText.x = 450;
         }
-        this.timeText.y = (this.topH - this.topSize) / 2;
+        this.timeText.y = (this.topH - this.topSize) / 2 + this.topShapeY;
         this.timeText.text = this.textDatas["time"] + ": 00:00";
         this.timer = new egret.Timer(1000, 0);
         this.timer.addEventListener(egret.TimerEvent.TIMER, this.timerFunc, this);
@@ -1222,7 +1229,7 @@ class Main extends eui.UILayer {
         this.myGroup = new egret.Sprite();
         this.mGroup.addChild(this.myGroup);
         this.myGroup.x = 0;
-        this.myGroup.y = this.firstTop;
+        this.myGroup.y = this.firstTop + this.topShapeY;
 
         this.mySuitBg = new egret.Sprite();
         this.myGroup.addChild(this.mySuitBg);
@@ -1268,7 +1275,7 @@ class Main extends eui.UILayer {
         this.myColumns = new egret.Sprite(); //下方7列
         this.mGroup.addChild(this.myColumns);
         this.myColumns.x = 7;
-        this.myColumns.y = 230 + this.firstTop + this.SecondTop;
+        this.myColumns.y = 230 + this.firstTop + this.topShapeY + this.SecondTop;
 
         this.bottomGroup = new egret.Sprite();
         this.mGroup.addChild(this.bottomGroup);
@@ -1525,13 +1532,13 @@ class Main extends eui.UILayer {
             this.columnBgImage[i].scaleX = scaleX;
             this.columnBgImage[i].scaleY = scaleY;
             this.columnBgImage[i].x = 7 + i * (this.columnI_X - 3);
-            this.columnBgImage[i].y = 230 * scaleY + this.firstTop + this.SecondTop;
+            this.columnBgImage[i].y = 230 * scaleY + this.firstTop + this.topShapeY + this.SecondTop;
         }
 
         this.handsBgImage.scaleX = scaleX;
         this.handsBgImage.scaleY = scaleY;
         this.myGroup.x = 0;
-        this.myGroup.y = this.firstTop;
+        this.myGroup.y = this.firstTop + this.topShapeY;
         for (var i = 0; i < 4; i++) {
             this.mySuit[i].x = this.columnI_X * i;
             this.mySuit[i].y = 0;
@@ -1607,7 +1614,7 @@ class Main extends eui.UILayer {
         }
 
         this.myColumns.x = 7;
-        this.myColumns.y = 230 * scaleY + this.firstTop + this.SecondTop;
+        this.myColumns.y = 230 * scaleY + this.firstTop + this.topShapeY + this.SecondTop;
         for (var i = 0; i < this.myColumns.numChildren; i++) {
             this.myColumn[i].x = i * (this.columnI_X - 3);
             var columnCardY = 0;
@@ -1679,15 +1686,15 @@ class Main extends eui.UILayer {
         if (this.scoreType != 1) {
             this.scoreText.scaleX = scaleX;
             this.scoreText.scaleY = scaleY;
-            this.scoreText.y = (this.topH - this.topSize) / 2;
+            this.scoreText.y = (this.topH - this.topSize) / 2 + this.topShapeY;
         }
         this.movesText.scaleX = scaleX;
         this.movesText.scaleY = scaleY;
-        this.movesText.y = (this.topH - this.topSize) / 2;
+        this.movesText.y = (this.topH - this.topSize) / 2 + this.topShapeY;
 
         this.timeText.scaleX = scaleX;
         this.timeText.scaleY = scaleY;
-        this.timeText.y = (this.topH - this.topSize) / 2;
+        this.timeText.y = (this.topH - this.topSize) / 2 + this.topShapeY;
 
         this.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, this.myColumnsStart, this);
         this.myColumns.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.touchTap, this);
@@ -1818,12 +1825,19 @@ class Main extends eui.UILayer {
                 defaultClick = 0;
             }
             if (i != 0) {
-                this.settingsButtonGroups[i] = this.settingsButtonGroup(title, button1, button2, button3, defaultClick);
+                if (i == 6 || i == 8) {
+                } else {
+                    this.settingsButtonGroups[i] = this.settingsButtonGroup(title, button1, button2, button3, defaultClick);
+                }
             }
             if (i > 0 && i < 9) {
-                this.settingsButtonGroups[i].y = 164 * (i - 1);
+                if(i<6){
+                    this.settingsButtonGroups[i].y = 164 * (i - 1);
+                } else if(i==7){
+                    this.settingsButtonGroups[i].y = 164 * (i - 2);
+                }
             } else if (i == 9) {
-                this.settingsButtonGroups[i].y = 164 * 7 + 70;
+                this.settingsButtonGroups[i].y = 164 * 6;
             }
         }
 
@@ -1834,7 +1848,7 @@ class Main extends eui.UILayer {
         this.gameRules.text = datas[9].content;
         this.gameRules.fontFamily = "Frutiger";
         this.scrollerViewport.addChild(this.gameRules);
-        this.gameRules.y = 164 * 7 + 170;
+        this.gameRules.y = 164 * 6 + 100;
         // var Shape = new egret.Sprite();
         // Shape.graphics.beginFill(0xFF0000, 0.5);
         // Shape.graphics.drawRect(this.gameRules.x, this.gameRules.y, this.gameRules.width, this.gameRules.height);
@@ -1857,44 +1871,44 @@ class Main extends eui.UILayer {
         this.scroller.scrollPolicyH = eui.ScrollPolicy.OFF;
         this.scroller.verticalScrollBar = null;
         this.scroller.horizontalScrollBar = null;
-        if (this.isCrossScreen) {
+        // if (this.isCrossScreen) {
             // if (egret.Capabilities.runtimeType == egret.RuntimeType.WEB) {
             //     var scaleX = this.scaleXX, scaleY = this.scaleYY;
             //     this.settingsGroup.scaleX = scaleX;
             //     //   this.settingsGroup.scaleY = scaleY;
             //     this.settingsGroup.x = (1080 - this.settingsBGBitmap.width * scaleX) / 2;
             // }else{
-            this.shp.graphics.clear();
-            this.shp.graphics.beginFill(0x000000, 0.3);
-            this.shp.graphics.drawRect(0, 0, Main.HEIGHT, Main.WIDTH);
-            this.shp.graphics.endFill();
-            this.settingsGroup.x = (Main.HEIGHT - this.settingsBGBitmap.width) / 2;
-            this.settingsGroup.height = Main.WIDTH - this.settingsGroup.y - this.bottomGroup.height;
-            this.scroller.height = this.settingsGroup.height - this.settingsTopGroup.height - 40;
-            this.scroller.x = 952;
-            this.scroller.rotation = 90;
-            this.scroller.height = 952;
-            this.scroller.width = this.settingsGroup.height - this.settingsTopGroup.height - 40;
+            // this.shp.graphics.clear();
+            // this.shp.graphics.beginFill(0x000000, 0.3);
+            // this.shp.graphics.drawRect(0, 0, Main.HEIGHT, Main.WIDTH);
+            // this.shp.graphics.endFill();
+            // this.settingsGroup.x = (Main.HEIGHT - this.settingsBGBitmap.width) / 2;
+            // this.settingsGroup.height = Main.WIDTH - this.settingsGroup.y - this.bottomGroup.height;
+            // this.scroller.height = this.settingsGroup.height - this.settingsTopGroup.height - 40;
+            // this.scroller.x = 952;
+            // this.scroller.rotation = 90;
+            // this.scroller.height = 952;
+            // this.scroller.width = this.settingsGroup.height - this.settingsTopGroup.height - 40;
 
-            var datas = this.textDatas["settingsButton"];
-            for (var key in datas) {
-                var i = Number(key);
-                this.settingsButtonGroups[i].y = 902;
-                if (i == 8) {
-                    this.settingsButtonGroups[i].x = 164 * 7 + 70;
-                } else {
-                    this.settingsButtonGroups[i].x = 164 * i;
-                }
-                this.settingsButtonGroups[i].rotation = -90;
-            }
-            this.gameRules.y = 872;
-            this.gameRules.x = 164 * 7 + 170;
-            this.gameRules.rotation = -90;
-            this.scroller.scrollPolicyV = eui.ScrollPolicy.OFF;
-            this.scroller.scrollPolicyH = eui.ScrollPolicy.ON;
-            this.settingsBGBitmap.height = this.settingsGroup.height;
+            // var datas = this.textDatas["settingsButton"];
+            // for (var key in datas) {
+            //     var i = Number(key);
+            //     this.settingsButtonGroups[i].y = 902;
+            //     if (i == 8) {
+            //         this.settingsButtonGroups[i].x = 164 * 7 + 70;
+            //     } else {
+            //         this.settingsButtonGroups[i].x = 164 * i;
+            //     }
+            //     this.settingsButtonGroups[i].rotation = -90;
             // }
-        }
+            // this.gameRules.y = 872;
+            // this.gameRules.x = 164 * 7 + 170;
+            // this.gameRules.rotation = -90;
+            // this.scroller.scrollPolicyV = eui.ScrollPolicy.OFF;
+            // this.scroller.scrollPolicyH = eui.ScrollPolicy.ON;
+            // this.settingsBGBitmap.height = this.settingsGroup.height;
+            // }
+        // }
     }
 
     private setbatGameGroup() {
@@ -2360,13 +2374,13 @@ class Main extends eui.UILayer {
         for (var i = 0; i < 7; i++) {
             for (var j = i; j < 7; j++) {
                 var x;
-                var y = this.firstTop + this.SecondTop + 230 + i * 25;
+                var y;
                 if (this.isCrossScreen) {
                     x = j * this.columnI_X + 149 / 2 * scaleX + this.myColumns.x;
                     y = i * 25 * scaleY;
                 } else {
                     x = j * this.columnI_X + 149 / 2 * scale_X;
-                    y = this.firstTop + this.SecondTop + 230 * scale_Y + i * 25;
+                    y = this.firstTop + this.topShapeY + this.SecondTop + 230 * scale_Y + i * 25;
                 }
                 var currentObject = cardGroups[xx];
                 var tween = egret.Tween.get(currentObject).wait(105 * xx)
@@ -2544,7 +2558,6 @@ class Main extends eui.UILayer {
     private timerFunc() {
         var second = this.timer.delay * this.timer.currentCount / 1000;
         if (second % 10 == 0 && this.scoreType == 2) {
-            console.log("10!")
             this.score -= 2;
             if (this.score < 0) {
                 this.score = 0;
@@ -2706,7 +2719,7 @@ class Main extends eui.UILayer {
         var hasMove = false;
         if (!this.isCrossScreen) {
             var scale_Y = this.defaultHeight / window.innerHeight;
-            if (stageY >= this.firstTop + 230 * scale_Y + this.SecondTop) {
+            if (stageY >= this.firstTop + this.topShapeY + 230 * scale_Y + this.SecondTop) {
                 hasMove = this.autoMoveColumn(stageX, cardGroup);
             } else if (stageX >= this.columnI_X * 4) {
                 hasMove = this.autoMoveWaste(cardGroup);
@@ -2988,7 +3001,6 @@ class Main extends eui.UILayer {
                     this.score = 0;
                 }
                 this.scoreText.text = this.textDatas["score"] + ": " + this.score + " ";
-                console.log("1!")
             } else if (this.scoreType == 3) {
                 this.score -= 5;
                 this.scoreText.text = this.textDatas["score"] + ": " + this.score + " ";
@@ -3334,7 +3346,7 @@ class Main extends eui.UILayer {
             if (record.begin == "columns") {
                 groupNumY = this.getGroupNumY(group, record.isflopAnimation);
             }
-            if (groupY < 230 + this.firstTop) {
+            if (groupY < 230 + this.firstTop + this.topShapeY) {
                 if (667 <= groupX && groupX <= 910) {
                     groupNumX = group.numChildren < 3 ? group.numChildren * 48 : 96;
                 }
@@ -3351,7 +3363,7 @@ class Main extends eui.UILayer {
             if (nParentObject.parent) {
                 nParentObject.parent.swapChildrenAt(nParentObject.parent.getChildIndex(nParentObject), nParentObject.parent.numChildren - 1);
             }
-            if (card.parent && card.parent.localToGlobal().y < 230 + this.firstTop) {
+            if (card.parent && card.parent.localToGlobal().y < 230 + this.firstTop + this.topShapeY) {
                 nParentObject = card.parent.parent.parent;
                 nParentObject.parent.swapChildrenAt(nParentObject.parent.getChildIndex(nParentObject), nParentObject.parent.numChildren - 1);
             }
@@ -3673,7 +3685,6 @@ class Main extends eui.UILayer {
         }
         if (this.scoreType == 2) {
             this.score -= 2;
-            console.log("2!")
             if ((record.begin == "columns" || record.begin == "wastes") && record.end == "suits") {
                 this.score -= 10;
             } else if (record.begin == "wastes" && record.end == "columns") {
@@ -3687,7 +3698,6 @@ class Main extends eui.UILayer {
 
             if (record.isflopAnimation) {
                 this.score -= 5;
-                console.log("3!")
             }
 
             if (this.score < 0) {
@@ -3885,10 +3895,8 @@ class Main extends eui.UILayer {
         this.record.push(record);
         if (this.scoreType == 2) {
             if (this.clickDragCardCount == 1) {
-                console.log("4!")
                 this.score -= 100;
             } else {
-                console.log("5!")
                 this.score -= 20;
             }
             if (this.score < 0) {
@@ -4003,7 +4011,7 @@ class Main extends eui.UILayer {
             this.beginX = e.stageX;
             this.beginY = e.stageY;
             this.offsetX = this.beginX - this.draggedObject.parent.x;
-            if (this.beginY >= 230 + this.firstTop) {
+            if (this.beginY >= 230 + this.firstTop + this.topShapeY) {
                 for (var i = 0; i < 7; i++) {
                     if (i * this.columnI_X <= this.beginX && this.beginX < i * this.columnI_X + 149) {
                         this.beginColumnsI = i;
@@ -4013,7 +4021,7 @@ class Main extends eui.UILayer {
                         break;
                     }
                 }
-                this.offsetY = this.beginY - (this.firstTop + this.SecondTop + 230) - this.draggedObject.y;
+                this.offsetY = this.beginY - (this.firstTop + this.topShapeY + this.SecondTop + 230) - this.draggedObject.y;
             } else {
                 this.beginColumnsI = -1;
                 if (this.beginX >= 667 && this.beginX < this.myFreeBg.x + this.myFree.x) {
@@ -4031,8 +4039,8 @@ class Main extends eui.UILayer {
                 }
             }
             var nParentObject;
-            if (this.beginY < this.firstTop + 230) {
-                this.offsetY = this.beginY - this.firstTop - this.draggedObject.parent.y;
+            if (this.beginY < this.firstTop + this.topShapeY + 230) {
+                this.offsetY = this.beginY - (this.firstTop + this.topShapeY) - this.draggedObject.parent.y;
                 nParentObject = this.draggedObject.parent.parent.parent;
                 nParentObject.parent.swapChildrenAt(nParentObject.parent.getChildIndex(nParentObject), nParentObject.parent.numChildren - 1);
             }
@@ -4167,12 +4175,12 @@ class Main extends eui.UILayer {
         }
         this.isMove = true;
         if (!this.isCrossScreen) {
-            if (this.beginY >= this.firstTop + 230 && !this.solitaire.isDraggable(this.dragCard.id)) {
+            if (this.beginY >= this.firstTop + this.topShapeY + 230 && !this.solitaire.isDraggable(this.dragCard.id)) {
                 return;
             }
             var numChildren = this.draggedObject.parent.numChildren;
             var index = this.draggedObject.parent.getChildIndex(this.draggedObject);
-            if (this.beginY < this.firstTop + 230) {
+            if (this.beginY < this.firstTop + this.topShapeY + 230) {
                 if (index != numChildren - 1) {
                     return;
                 }
@@ -4185,10 +4193,10 @@ class Main extends eui.UILayer {
                     else
                         this.draggedObject.x = e.stageX - this.offsetX + 40 * 2.25;
                 }
-                this.draggedObject.y = e.stageY - this.firstTop - this.offsetY;
+                this.draggedObject.y = e.stageY - (this.firstTop + this.topShapeY) - this.offsetY;
             } else {
                 this.draggedObject.x = e.stageX - this.draggedObject.parent.x - this.offsetX;
-                this.draggedObject.y = e.stageY - (this.firstTop + this.SecondTop + 230) - this.offsetY;//判断
+                this.draggedObject.y = e.stageY - (this.firstTop + this.topShapeY + this.SecondTop + 230) - this.offsetY;//判断
                 var index = this.draggedObject.parent.getChildIndex(this.draggedObject);
                 var numChildren = this.draggedObject.parent.numChildren;
                 var count = 1;
@@ -4313,7 +4321,7 @@ class Main extends eui.UILayer {
         var index = this.draggedObject.parent.getChildIndex(this.draggedObject);
         if (!this.isCrossScreen) {
             var X = e.stageX - this.offsetX;
-            if (this.beginY < this.firstTop + 230) {
+            if (this.beginY < this.firstTop + this.topShapeY + 230) {
                 if (this.beginX >= 667) {
                     if (index != numChildren - 1) {
                         return;
@@ -4326,7 +4334,7 @@ class Main extends eui.UILayer {
                         X = e.stageX - (this.beginX - 667.5 - 40 * 2.25);
                 }
             }
-            if (e.stageY - this.offsetY < this.firstTop + 230) {
+            if (e.stageY - this.offsetY < this.firstTop + this.topShapeY + 230) {
                 if (index == numChildren - 1) {
                     for (var i = 0; i < 4; i++) {
                         if (i * this.columnI_X - 149 / 2 < X && X < i * this.columnI_X + 149 / 2) {
@@ -4335,7 +4343,7 @@ class Main extends eui.UILayer {
                             }
                             var card, record;
                             var isflopAnimation = false;
-                            if (this.beginY >= this.firstTop + 230) {
+                            if (this.beginY >= this.firstTop + this.topShapeY + 230) {
                                 if (index > 0) {
                                     var currentCard = this.myColumn[this.beginColumnsI].getChildAt(index - 1) as CardGroup;
                                     if (!this.solitaire.columns[this.beginColumnsI][index - 1].status) {
@@ -4405,16 +4413,16 @@ class Main extends eui.UILayer {
                     if (i * this.columnI_X - 149 / 2 < X && X < i * this.columnI_X + 149 / 2) {
                         var count = this.myColumn[i].numChildren;//点击点和牌高度判断
                         var columnNumY = this.getColumNumY(i);
-                        if (count == 0 && (-80 > e.stageY - this.offsetY - (this.firstTop + this.SecondTop + 230) || e.stageY - this.offsetY - (this.firstTop + this.SecondTop + 230) > 230)) {
+                        if (count == 0 && (-80 > e.stageY - this.offsetY - (this.firstTop + this.topShapeY + this.SecondTop + 230) || e.stageY - this.offsetY - (this.firstTop + this.SecondTop + 230) > 230)) {
                             continue;
-                        } else if (count > 0 && (columnNumY - 80 > e.stageY - this.offsetY - (this.firstTop + this.SecondTop + 230) || e.stageY - this.offsetY - (this.firstTop + this.SecondTop + 230) > 230 + columnNumY)) {
+                        } else if (count > 0 && (columnNumY - 80 > e.stageY - this.offsetY - (this.firstTop + this.topShapeY + this.SecondTop + 230) || e.stageY - this.offsetY - (this.firstTop + this.SecondTop + 230) > 230 + columnNumY)) {
                             continue;
                         }
                         var numChildren = this.draggedObject.parent.numChildren;
                         var parentObject = this.draggedObject.parent;
                         var record;
                         var isflopAnimation = false;
-                        if (this.beginY >= this.firstTop + 230) {                            //当移动牌时 pop and add
+                        if (this.beginY >= this.firstTop + this.topShapeY + 230) {                            //当移动牌时 pop and add
                             if (!this.solitaire.isAddable(i, this.solitaire.columns[this.beginColumnsI][index])) {
                                 break;
                             }
@@ -4456,7 +4464,6 @@ class Main extends eui.UILayer {
                                 record = new Records(this.draggedObject, this.draggedObject.parent as egret.Sprite, "suits", this.beginSuitsI, "columns", i);
                                 if (this.scoreType == 2) {
                                     this.score -= 15;
-                                    console.log("6!")
                                     if (this.score < 0) {
                                         this.score = 0;
                                     }
@@ -4489,7 +4496,7 @@ class Main extends eui.UILayer {
                 }
             }
 
-            if (this.beginY < this.firstTop + 230) {
+            if (this.beginY < this.firstTop + this.topShapeY + 230) {
                 var x = 0;
                 if (this.beginX >= 667 && this.beginX <= 910) {
                     if (this.solitaire.wastes.length < 3)
@@ -4897,7 +4904,6 @@ class Main extends eui.UILayer {
                                 record = new Records(this.draggedObject, this.draggedObject.parent as egret.Sprite, "suits", this.beginSuitsI, "columns", i);
                                 if (this.scoreType == 2) {
                                     this.score -= 15;
-                                    console.log("7!")
                                     if (this.score < 0) {
                                         this.score = 0;
                                     }
@@ -5194,7 +5200,7 @@ class Main extends eui.UILayer {
                     this.hintLabel.text = this.textDatas["hintMessage"];
                     this.hintLabel.size = 60;
                     egret.Tween.get(this.hintLabel).call(this.addLabel, this).to({ alpha: 1 }, 200, egret.Ease.sineIn)
-                        .wait(300).call(this.removeLabel, this);
+                        .wait(600).call(this.removeLabel, this);
                     if (this.isCrossScreen) {
                         this.hintLabel.scaleX = this.scaleXX;
                         this.hintLabel.scaleY = this.scaleYY;
@@ -5718,7 +5724,7 @@ class Main extends eui.UILayer {
         this.newGameButtonLabel.textColor = 0x1c643b;
         this.newGameButtonLabel.x = (this.stage.stageWidth - this.newGameButtonLabel.textWidth) / 2;
         this.newGameButtonLabel.y = this.newGameButton.y - 5 + (this.newGameButton.texture.textureHeight - this.newGameButtonLabel.size) / 2;
-
+        this.newGameButtonLabel.addEventListener(egret.TouchEvent.TOUCH_TAP, this.randStartGame, this);
 
         // if (this.isCrossScreen) {
         //     // this.mc.scaleY = this.scaleYY;

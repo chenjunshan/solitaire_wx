@@ -33,6 +33,20 @@ class SystemUtil {
     }
 
     /**
+    * 判断当前运行环境是否是 iPhoneX
+    */
+    public static async isIPhoneX() {
+        var result: boolean = false;
+        var data = await platform.getSystemInfo();
+        if (data) {
+            var model: string = data.model;
+            var index = model.indexOf("iPhone X");
+            result = (index != -1);
+        }
+        return result;
+    }
+
+    /**
     * 判断当前运行环境是否是 微信
     */
     public static isWX(): boolean {
